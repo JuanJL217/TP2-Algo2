@@ -1,72 +1,100 @@
 #include "extra/engine.h"
 #include "extra/ansi.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include "src/menu.h"
+#include "src/pokedex.h"
+#include "src/lista.h"
+#include "src/abb.h"
 
-struct jugador {
-	int x;
-	int y;
-	int iteraciones;
-};
+size_t MAX_CARACTERES = 20;
+size_t CANTIDAD_OPCIONES = 4;
 
-int max(int a, int b)
+typedef struct booleanos {
+	bool menu_seguir;
+	bool pokemones_cargados;
+	pokedex_t *pokedex;
+} booleanos_t;
+
+bool llamar_pokedex(void *ctx)
 {
-	return a > b ? a : b;
+	return true;
 }
 
-int min(int a, int b)
+bool jugar_partida(void *ctx)
 {
-	return a < b ? a : b;
+	return true;
 }
 
-int logica(int entrada, void *datos)
+bool jugar_con_semilla(void *ctx)
 {
-	struct jugador *jugador = datos;
-	borrar_pantalla();
+	return true;
+}
 
-	if (entrada == TECLA_DERECHA)
-		jugador->x++;
-	else if (entrada == TECLA_IZQUIERDA)
-		jugador->x--;
-	else if (entrada == TECLA_ARRIBA)
-		jugador->y--;
-	else if (entrada == TECLA_ABAJO)
-		jugador->y++;
+bool salir_del_menu(void *ctx)
+{
+	(*(booleanos_t *)ctx).menu_seguir = false;
+	return true;
+}
 
-	jugador->x = min(20, max(0, jugador->x));
-	jugador->y = min(10, max(0, jugador->y));
+bool imprimir_opciones(void *_opcion, void *nada)
+{
+	opcion_menu_t *opcion = (opcion_menu_t *)_opcion;
+	printf("   (" ANSI_COLOR_RED "%c" ANSI_COLOR_RESET ") " ANSI_COLOR_BLUE
+	       "%s" ANSI_COLOR_RESET "\n",
+	       opcion->indice, opcion->texto);
+	return true;
+}
 
-	jugador->iteraciones++;
+bool es_caracter(char *texto)
+{
+	if (fgets(texto, sizeof(texto), stdin) == NULL)
+		return false;
+	texto[strcspn(texto, "\n")] = '\0';
+	return strlen(texto) == 1;
+}
 
-	printf("Utilizar " ANSI_COLOR_CYAN ANSI_COLOR_BOLD
-	       "⬆⬇⬅➡" ANSI_COLOR_RESET " para moverse\n");
+bool agregar_opciones_al_menu(menu_t *menu)
+{
+	menu_ingresar_opcion(menu, 'P', "Mostrar pokedex", llamar_pokedex);
+	menu_ingresar_opcion(menu, 'J', "Iniciar juego", jugar_partida);
+	menu_ingresar_opcion(menu, 'S', "Iniciar juego con semilla",
+			     jugar_con_semilla);
+	menu_ingresar_opcion(menu, 'Q', "Salir", salir_del_menu);
 
-	printf("Presionar " ANSI_COLOR_RED ANSI_COLOR_BOLD "Q" ANSI_COLOR_RESET
-	       " para salir\n");
-
-	printf("Iteraciones: %d Tiempo: %d\n", jugador->iteraciones,
-	       jugador->iteraciones / 5);
-
-	for (int i = 0; i < jugador->y; i++)
-		printf("\n");
-
-	for (int i = 0; i < jugador->x; i++)
-		printf(" ");
-
-	printf(ANSI_COLOR_MAGENTA ANSI_COLOR_BOLD "Ω" ANSI_COLOR_RESET);
-
-	printf("\n");
-	esconder_cursor();
-
-	return entrada == 'q' || entrada == 'Q';
+	if (menu_cantidad(menu) != CANTIDAD_OPCIONES) {
+		menu_destruir(menu);
+		return false;
+	}
+	return true;
 }
 
 int main()
 {
-	struct jugador jugador = { 0 };
+	menu_t *menu = menu_crear();
+	if (!menu) {
+		printf("No se pudo crear el menú");
+		return -1;
+	}
 
-	game_loop(logica, &jugador);
-
-	mostrar_cursor();
+	if (!agregar_opciones_al_menu(menu)) {
+		printf("Fallo en la creación de las opciones");
+		return -2;
+	}
+	booleanos_t datos = { .menu_seguir = true,
+			      .pokemones_cargados = false,
+			      .pokedex = NULL };
+	char texto[MAX_CARACTERES];
+	while (datos.menu_seguir) {
+		menu_iterar_opciones(menu, imprimir_opciones, NULL);
+		if (es_caracter(texto)) {
+			char mayuscula = (char)toupper((unsigned char)texto[0]);
+			menu_ejecutar_opcion(menu, mayuscula, (void *)&datos);
+		}
+	}
+	menu_destruir(menu);
 
 	return 0;
 }

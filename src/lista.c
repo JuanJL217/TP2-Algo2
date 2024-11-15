@@ -16,7 +16,7 @@ typedef struct nodo {
 	struct nodo *siguiente;
 } nodo_lista;
 
-nodo_lista *nodo_crear(void *cosa)
+nodo_lista *nodo_crear_en_lista(void *cosa)
 {
 	nodo_lista *nodo = malloc(sizeof(nodo_lista));
 	if (!nodo)
@@ -26,7 +26,7 @@ nodo_lista *nodo_crear(void *cosa)
 	return nodo;
 }
 
-nodo_lista *buscar_nodo(nodo_lista *nodo_actual, size_t posicion, size_t ajuste)
+nodo_lista *buscar_nodo_en_lista(nodo_lista *nodo_actual, size_t posicion, size_t ajuste)
 {
 	for (size_t i = 0; i < posicion - ajuste; i++)
 		nodo_actual = nodo_actual->siguiente;
@@ -86,7 +86,7 @@ bool lista_agregar_elemento(Lista *lista, size_t posicion, void *cosa)
 	if (es_el_final(posicion, lista->cantidad_elementos))
 		return lista_agregar_al_final(lista, cosa);
 
-	nodo_lista *nuevo_nodo = nodo_crear(cosa);
+	nodo_lista *nuevo_nodo = nodo_crear_en_lista(cosa);
 	if (!nuevo_nodo)
 		return false;
 
@@ -94,7 +94,7 @@ bool lista_agregar_elemento(Lista *lista, size_t posicion, void *cosa)
 		nuevo_nodo->siguiente = lista->primer_nodo;
 		lista->primer_nodo = nuevo_nodo;
 	} else {
-		nodo_lista *nodo_encontrado = buscar_nodo(
+		nodo_lista *nodo_encontrado = buscar_nodo_en_lista(
 			lista->primer_nodo, posicion, UNA_POSICION_ANTES);
 		nuevo_nodo->siguiente = nodo_encontrado->siguiente;
 		nodo_encontrado->siguiente = nuevo_nodo;
@@ -109,7 +109,7 @@ bool lista_agregar_al_final(Lista *lista, void *cosa)
 	if (!lista)
 		return false;
 
-	nodo_lista *nuevo_nodo = nodo_crear(cosa);
+	nodo_lista *nuevo_nodo = nodo_crear_en_lista(cosa);
 	if (!nuevo_nodo)
 		return false;
 
@@ -140,7 +140,7 @@ bool lista_quitar_elemento(Lista *lista, size_t posicion,
 		if (lista->cantidad_elementos == 1)
 			lista->ultimo_nodo = NULL;
 	} else {
-		nodo_anterior = buscar_nodo(lista->primer_nodo, posicion,
+		nodo_anterior = buscar_nodo_en_lista(lista->primer_nodo, posicion,
 					    UNA_POSICION_ANTES);
 		if (posicion == posicion_ultimo_nodo(lista)) {
 			nodo_encontrado = lista->ultimo_nodo;
@@ -185,7 +185,7 @@ bool lista_obtener_elemento(Lista *lista, size_t posicion,
 		return false;
 
 	nodo_lista *nodo_encontrado =
-		buscar_nodo(lista->primer_nodo, posicion, 0);
+		buscar_nodo_en_lista(lista->primer_nodo, posicion, 0);
 
 	if (elemento_encontrado)
 		*elemento_encontrado = nodo_encontrado->elemento;

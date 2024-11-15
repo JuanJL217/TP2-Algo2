@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "pokedex.h": "c",
+        "stdbool.h": "c"
+    }
+}

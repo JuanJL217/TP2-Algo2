@@ -13,11 +13,11 @@ struct archivo_csv {
 
 // ------ FUNCIONES EXTRAS --------
 
-bool redimencionar_vector_texto(char **texto, size_t *capacidad) // ====> O(c)
+bool redimencionar_vector_texto(char **texto, size_t *capacidad)
 {
 	*capacidad *= FACTOR_CRECIMIENTO_LINEA;
 	char *nuevo_bloque_texto =
-		realloc(*texto, (*capacidad) * sizeof(char)); // O(c)
+		realloc(*texto, (*capacidad) * sizeof(char));
 	if (!nuevo_bloque_texto) {
 		return false;
 	}
@@ -26,7 +26,7 @@ bool redimencionar_vector_texto(char **texto, size_t *capacidad) // ====> O(c)
 }
 
 bool esta_llegando_al_tope_del_vector_texto(size_t tamaño_texto,
-					    size_t capacidad_linea) // O(1)
+					    size_t capacidad_linea)
 {
 	return tamaño_texto >= (capacidad_linea * 75) / 100;
 }
@@ -34,7 +34,7 @@ bool esta_llegando_al_tope_del_vector_texto(size_t tamaño_texto,
 // -------- FUNCIONES PRINCIPALES --------
 
 struct archivo_csv *abrir_archivo_csv(const char *nombre_archivo,
-				      char separador) //  =====> O(1)
+				      char separador) 
 {
 	struct archivo_csv *inicializar_archivo =
 		malloc(sizeof(struct archivo_csv));
@@ -55,7 +55,7 @@ struct archivo_csv *abrir_archivo_csv(const char *nombre_archivo,
 
 size_t leer_linea_csv(struct archivo_csv *archivo, size_t columnas,
 		      bool (*funciones[])(const char *, void *),
-		      void *ctx[]) // =====> O(c² + m*c + m) => O(c²)
+		      void *ctx[])
 {
 	if (!archivo || !archivo->archivo || !funciones || !ctx) {
 		return 0;
@@ -71,19 +71,19 @@ size_t leer_linea_csv(struct archivo_csv *archivo, size_t columnas,
 
 	int codigo = getc(archivo->archivo);
 
-	while (codigo != EOF && codigo != '\n') { // c veces
+	while (codigo != EOF && codigo != '\n') {
 		if (esta_llegando_al_tope_del_vector_texto(tamaño_del_texto,
 							   capacidad_linea) &&
 		    !redimencionar_vector_texto(
 			    &texto,
-			    &capacidad_linea)) { // k veces O(c), pero k se desprecia a medida que c crece.
+			    &capacidad_linea)) {
 			free(texto);
 			return columna_posicion;
 		}
 		texto[tamaño_del_texto] = (char)codigo;
 		tamaño_del_texto++;
 		codigo = getc(archivo->archivo);
-	} // ====> O(c²)
+	}
 
 	texto[tamaño_del_texto] = '\0';
 
@@ -93,7 +93,7 @@ size_t leer_linea_csv(struct archivo_csv *archivo, size_t columnas,
 	}
 
 	struct Partes *partes =
-		dividir_string(texto, archivo->separador); // O(c²)
+		dividir_string(texto, archivo->separador);
 	free(texto);
 
 	if (!partes || partes->cantidad == 0 || partes->cantidad < columnas) {
@@ -101,7 +101,7 @@ size_t leer_linea_csv(struct archivo_csv *archivo, size_t columnas,
 		return columna_posicion;
 	}
 
-	while (columna_posicion < columnas) { // m veces
+	while (columna_posicion < columnas) {
 		if (!funciones[columna_posicion]) {
 			liberar_partes(partes);
 			return columna_posicion;
@@ -109,18 +109,18 @@ size_t leer_linea_csv(struct archivo_csv *archivo, size_t columnas,
 
 		if (!funciones[columna_posicion](
 			    partes->string[columna_posicion],
-			    ctx[columna_posicion])) { //  o(c)
+			    ctx[columna_posicion])) { 
 			liberar_partes(partes);
 			return columna_posicion + 1;
 		}
 		columna_posicion++;
-	} // ===> O(m*c)
+	}
 
-	liberar_partes(partes); //O(m)
+	liberar_partes(partes);
 	return columnas;
 }
 
-void cerrar_archivo_csv(struct archivo_csv *archivo) // =====> O(1)
+void cerrar_archivo_csv(struct archivo_csv *archivo)
 {
 	if (archivo) {
 		if (archivo->archivo) {
