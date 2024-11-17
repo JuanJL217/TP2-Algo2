@@ -1,43 +1,16 @@
-#include "extra/engine.h"
-#include "extra/ansi.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "extra/engine.h"
+#include "extra/ansi.h"
 #include "src/menu.h"
 #include "src/pokedex.h"
-#include "src/lista.h"
-#include "src/abb.h"
+#include "src/colores.h"
+#include "src/logica.h"
 
-size_t MAX_CARACTERES = 20;
-size_t CANTIDAD_OPCIONES = 4;
-
-typedef struct booleanos {
-	bool menu_seguir;
-	bool pokemones_cargados;
-	pokedex_t *pokedex;
-} booleanos_t;
-
-bool llamar_pokedex(void *ctx)
-{
-	return true;
-}
-
-bool jugar_partida(void *ctx)
-{
-	return true;
-}
-
-bool jugar_con_semilla(void *ctx)
-{
-	return true;
-}
-
-bool salir_del_menu(void *ctx)
-{
-	(*(booleanos_t *)ctx).menu_seguir = false;
-	return true;
-}
+const size_t CANTIDAD_OPCIONES = 4;
+const size_t MAX_CARACTERES_A = 20;
 
 bool imprimir_opciones(void *_opcion, void *nada)
 {
@@ -57,8 +30,8 @@ bool es_caracter(char *texto)
 }
 
 bool agregar_opciones_al_menu(menu_t *menu)
-{
-	menu_ingresar_opcion(menu, 'P', "Mostrar pokedex", llamar_pokedex);
+{	
+	menu_ingresar_opcion(menu, 'P', "Mostrar pokedex", mostrar_pokemones);
 	menu_ingresar_opcion(menu, 'J', "Iniciar juego", jugar_partida);
 	menu_ingresar_opcion(menu, 'S', "Iniciar juego con semilla",
 			     jugar_con_semilla);
@@ -69,6 +42,16 @@ bool agregar_opciones_al_menu(menu_t *menu)
 		return false;
 	}
 	return true;
+}
+
+void destruir_datos(pokedex_t *pokedex, colores_t *colores)
+{
+	if (pokedex) {
+		pokedex_destruir(pokedex);
+	}
+	if (colores) {
+		colores_destruir(colores);
+	}
 }
 
 int main()
@@ -83,18 +66,22 @@ int main()
 		printf("Fallo en la creación de las opciones");
 		return -2;
 	}
-	booleanos_t datos = { .menu_seguir = true,
-			      .pokemones_cargados = false,
-			      .pokedex = NULL };
-	char texto[MAX_CARACTERES];
-	while (datos.menu_seguir) {
+	booleanos banderas = { .menu_seguir = true,
+			       .pokedex = NULL,
+			       .colores = NULL,
+				   .semilla = NULL};
+	char texto[MAX_CARACTERES_A];
+	while (banderas.menu_seguir) {
 		menu_iterar_opciones(menu, imprimir_opciones, NULL);
 		if (es_caracter(texto)) {
 			char mayuscula = (char)toupper((unsigned char)texto[0]);
-			menu_ejecutar_opcion(menu, mayuscula, (void *)&datos);
+			menu_ejecutar_opcion(menu, mayuscula,
+					     (void *)&banderas);
 		}
 	}
 	menu_destruir(menu);
-
+	if (banderas.pokedex || banderas.colores) {
+		destruir_datos(banderas.pokedex, banderas.colores);
+	}
 	return 0;
 }
