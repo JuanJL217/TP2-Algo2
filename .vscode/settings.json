@@ -4,6 +4,9 @@
         "stdbool.h": "c",
         "colores.h": "c",
         "string.h": "c",
-        "engine.h": "c"
+        "engine.h": "c",
+        "ansi.h": "c",
+        "stdlib.h": "c",
+        "movimientos.h": "c"
     }
 }

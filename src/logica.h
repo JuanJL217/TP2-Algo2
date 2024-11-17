@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+#define MAX_CARACTERES 20
 
 typedef struct booleanos {
 	bool menu_seguir;

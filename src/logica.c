@@ -9,8 +9,8 @@
 #include "tablero.h"
 #include "colores.h"
 #include "logica.h"
+#include "movimientos.h"
 
-const size_t MAX_CARACTERES = 20;
 const char *POSICION = "posicion";
 const char *CARACTER = "caracter";
 const char *COLOR = "color";
@@ -84,31 +84,34 @@ bool mostrar_pokemones(void *_banderas)
 typedef struct juego {
 	posicion *posicion;
 	tablero_t *tablero;
+	movimientos_t* movimientos;
 } juego_t;
 
 int logica_juego(int entrada, void *dato)
 {
-	bool seguir = true;
-	while (seguir) {
-		borrar_pantalla();
-		juego_t *juego = (juego_t *)dato;
-		size_t antes_x = juego->posicion->x;
-		size_t antes_y = juego->posicion->y;
-		if (entrada == TECLA_DERECHA) {
-			juego->posicion->x++;
-		} else if (entrada == TECLA_IZQUIERDA) {
-			juego->posicion->x--;
-		} else if (entrada == TECLA_ARRIBA) {
-			juego->posicion->y--;
-		} else if (entrada == TECLA_ABAJO) {
-			juego->posicion->y++;
-		}
-		tablero_mover_elemento(juego->tablero, antes_y, antes_x,
-				       juego->posicion->y, juego->posicion->x,
-				       MI_CARACTER, ANSI_COLOR_WHITE);
-		tablero_mostrar(juego->tablero);
-		seguir = false;
+	borrar_pantalla();
+	juego_t *juego = (juego_t *)dato;
+	size_t antes_x = juego->posicion->x;
+	size_t antes_y = juego->posicion->y;
+	printf("x: %li\n", antes_x);
+	printf("y: %li\n", antes_y);
+	char* direccion = NULL;
+	if (entrada == TECLA_DERECHA) {
+		direccion = "E";
+	} else if (entrada == TECLA_IZQUIERDA) {
+		direccion = "O";
+	} else if (entrada == TECLA_ARRIBA) {
+		direccion = "N";
+	} else if (entrada == TECLA_ABAJO) {
+		direccion = "S";
 	}
+	if (direccion) {
+		movimiento_realizar(juego->movimientos, direccion, &juego->posicion->y, &juego->posicion->x);
+	}
+	tablero_mover_elemento(juego->tablero, antes_y, antes_x,
+					juego->posicion->y, juego->posicion->x,
+					MI_CARACTER, ANSI_COLOR_WHITE);
+	tablero_mostrar(juego->tablero);
 	return entrada == 'q' || entrada == 'Q';
 }
 
@@ -130,6 +133,8 @@ bool jugar_partida(void *_banderas)
     } else {
         srand((unsigned int)*banderas->semilla);
     }
+	movimientos_t* movimientos = movimientos_crear();
+	movimientos_cargar(movimientos);
 	for (size_t i = 0; i < CANTIDAD_POKEMONES_EN_TABLERO; i++) {
 		int fila = 1 + rand() % (15 - 1 + 1);
 		int columna = 1 + rand() % (32 + 1 - 1);
@@ -142,11 +147,13 @@ bool jugar_partida(void *_banderas)
 					 pokemon->nombre[0], color);
 	}
 	posicion pos = { .x = 0, .y = 0 };
-	juego_t juego = { .tablero = tablero, .posicion = &pos };
+	juego_t juego = { .tablero = tablero, .posicion = &pos, .movimientos = movimientos};
 	tablero_colocar_elemento(tablero, 0, 0, MI_CARACTER, ANSI_COLOR_WHITE);
 	game_loop(logica_juego, (void *)&juego);
 	mostrar_cursor();
 	tablero_destruir(tablero);
+	movimientos_destruir(movimientos);
+	banderas->menu_seguir = false;
 	return true;
 }
 

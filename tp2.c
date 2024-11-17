@@ -10,7 +10,6 @@
 #include "src/logica.h"
 
 const size_t CANTIDAD_OPCIONES = 4;
-const size_t MAX_CARACTERES_A = 20;
 
 bool imprimir_opciones(void *_opcion, void *nada)
 {
@@ -70,7 +69,7 @@ int main()
 			       .pokedex = NULL,
 			       .colores = NULL,
 				   .semilla = NULL};
-	char texto[MAX_CARACTERES_A];
+	char texto[MAX_CARACTERES];
 	while (banderas.menu_seguir) {
 		menu_iterar_opciones(menu, imprimir_opciones, NULL);
 		if (es_caracter(texto)) {
