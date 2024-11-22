@@ -80,12 +80,13 @@ bool tablero_tamanio(tablero_t* tablero, size_t* filas, size_t* columnas)
 
 bool tablero_mover_elemento(tablero_t* tablero, size_t f_origen, size_t c_origen, size_t f_destino, size_t c_destino, char elemento, char* color)
 {   
-
     if (!tablero || !tablero->tabla)
         return false;
-    if (f_origen == f_destino && c_origen == c_destino) {
+
+    if (f_origen >= tablero->filas || c_origen >= tablero->columnas ||
+        f_destino >= tablero->filas || c_destino >= tablero->columnas)
         return false;
-    }
+
     tablero->tabla[f_origen][c_origen].elemento = ESPACIO_VACIO;
     tablero->tabla[f_origen][c_origen].color = ANSI_COLOR_BLACK;
     tablero->tabla[f_destino][c_destino].elemento = elemento;
@@ -111,15 +112,26 @@ bool tablero_mover_elemento(tablero_t* tablero, size_t f_origen, size_t c_origen
 
 void tablero_mostrar(tablero_t* tablero)
 {	
-	if (!tablero)
-		return;
+    if (!tablero)
+        return;
+    for (size_t fila = 0; fila < tablero->columnas; fila++) {
+        printf("-");
+    }
+    printf("\n");
     for (size_t fila = 0; fila < tablero->filas; fila++) {
+        printf("|");
         for (size_t columna = 0; columna < tablero->columnas; columna++) {
-            printf("%s%c%s", tablero->tabla[fila][columna].color, tablero->tabla[fila][columna].elemento, ANSI_COLOR_RESET);
+            printf(" %s%c%s ", tablero->tabla[fila][columna].color, tablero->tabla[fila][columna].elemento, ANSI_COLOR_RESET);
         }
+        printf("|");
         printf("\n");
     }
+    for (size_t fila = 0; fila < tablero->columnas; fila++) {
+        printf("-");
+    }
+    printf("\n"); // Aquí se agrega el salto de línea final
 }
+
 
 void tablero_destruir(tablero_t* tablero)
 {

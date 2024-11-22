@@ -7,6 +7,7 @@
         "engine.h": "c",
         "ansi.h": "c",
         "stdlib.h": "c",
-        "movimientos.h": "c"
+        "movimientos.h": "c",
+        "stdio.h": "c"
     }
 }
