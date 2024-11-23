@@ -11,6 +11,8 @@
 #include "colores.h"
 #include "logica.h"
 #include "movimientos.h"
+#include "pila.h"
+#include "cola.h"
 
 const char *POSICION = "posicion";
 const char *CARACTER = "caracter";
@@ -23,12 +25,13 @@ typedef struct jugador_en_juego {
 	char* color;
 	size_t cantidad_pasos;
 	size_t puntaje;
-	size_t puntaje_maximo;
+	size_t multiplicador;
 	size_t y;
 	size_t x;
 } mi_personaje;
 
 typedef struct pokemon_en_juego{
+	char* nombre;
 	char caracter;
 	char* color;
 	char* movimientos;
@@ -103,6 +106,8 @@ typedef struct informacion {
 	tablero_t *tablero;
 	movimientos_t* movimientos;
 	booleanos* banderas;
+	Pila* pokemones_capturados;
+	Cola* grupos_formados;
 } informacion_t;
 
 typedef struct juego {
@@ -163,10 +168,14 @@ int logica_juego(int entrada, void *_dato)
 	}
 	if (juego.direccion) {
 		movimiento_realizar(dato->movimientos, NULL, juego.direccion, &dato->personaje->y, &dato->personaje->x);
+		dato->personaje->cantidad_pasos++;
 	}
 	tablero_mover_elemento(dato->tablero, y_antes, x_antes,
 					dato->personaje->y, dato->personaje->x,
 					dato->personaje->caracter, dato->personaje->color);
+
+	lista_iterar_elementos(dato->pokemones_seleccionados, movimientos_pokemones, (void*)&juego);
+
 	size_t cantidad_pokemones_atrapados = lista_cantidad_elementos(dato->pokemones_eliminados);
 	for (size_t i = 0; i < cantidad_pokemones_atrapados; i++) {
 		size_t* posicion;
@@ -174,8 +183,20 @@ int logica_juego(int entrada, void *_dato)
 		lista_quitar_elemento(dato->pokemones_eliminados, 0, NULL);
 		pokemon_seleccionado* pokemon;
 		lista_quitar_elemento(dato->pokemones_seleccionados, *posicion-i, (void**)&pokemon);
-		free(pokemon);
 		free(posicion);
+		if (i == cantidad_pokemones_atrapados-1) {
+			dato->personaje->puntaje += (pokemon->puntaje * dato->personaje->multiplicador);
+			if (pila_esta_vacía(dato->pokemones_capturados)) {
+				pila_apilar(dato->pokemones_capturados, pokemon);
+			} else {
+				pokemon_seleccionado* ultimo_capturado = (pokemon_seleccionado*)pila_tope(dato->pokemones_capturados);
+				if (pokemon->caracter == ultimo_capturado->caracter || strcmp(pokemon->color, ultimo_capturado->color) == 0) {
+					dato->personaje->multiplicador++;
+				} else {
+					dato->personaje->multiplicador = 1;
+				}
+			}
+		}
 	}
 	for (size_t i = 0; i < cantidad_pokemones_atrapados; i++) {
 		int fila = 1 + rand() % (15);
@@ -196,8 +217,14 @@ int logica_juego(int entrada, void *_dato)
 		tablero_colocar_elemento(dato->tablero, (size_t)fila, (size_t)columna,
 					 pokemon->nombre[0], color);
 	}
-	lista_iterar_elementos(dato->pokemones_seleccionados, movimientos_pokemones, (void*)&juego);
+	printf("Pasos: %li, Puntos: %li, Multiplicador: x%li\n", 
+			dato->personaje->cantidad_pasos, dato->personaje->puntaje, 
+			dato->personaje->multiplicador);
 	tablero_mostrar(dato->tablero);
+	if (!pila_esta_vacía(dato->pokemones_capturados)) {
+		pokemon_seleccionado* pokemon = (pokemon_seleccionado*)pila_tope(dato->pokemones_capturados);
+		printf("Pokemon capturado: %s%s%s\n", pokemon->color, pokemon->nombre, ANSI_COLOR_RESET);
+	}
 	return entrada == 'q' || entrada == 'Q';
 }
 
@@ -241,6 +268,7 @@ bool jugar_partida(void *_banderas)
 			banderas->pokedex, (size_t)posicion_pokemon);
 		char *color = color_obtener(banderas->colores, pokemon->color);
 		pokemon_seleccionado* pokemon_objetivo = calloc(1, sizeof(pokemon_seleccionado)); ///////////////////////////////
+		pokemon_objetivo->nombre = pokemon->nombre;
 		pokemon_objetivo->caracter = pokemon->nombre[0];
 		pokemon_objetivo->color = color;
 		pokemon_objetivo->movimientos = pokemon->movimientos;
@@ -252,10 +280,15 @@ bool jugar_partida(void *_banderas)
 					 pokemon->nombre[0], color);
 	}
 	Lista* pokemones_eliminados = lista_crear();
+	Pila* pokemones_capturados = pila_crear();
+	Cola* grupos_formados = cola_crear();
 	mi_personaje jugador = {.caracter = MI_CARACTER, .color = ANSI_COLOR_WHITE, 
-	.cantidad_pasos = 0, .puntaje = 1, .puntaje_maximo = 0, .y = 0, .x = 0};
-	informacion_t juego = { .personaje = &jugador, .tablero= tablero,.movimientos = movimientos, .pokemones_seleccionados = objetivos_pokemones,
-	.pokemones_eliminados = pokemones_eliminados, .banderas = banderas};
+	.cantidad_pasos = 0, .puntaje = 0, .multiplicador = 1, .y = 0, .x = 0};
+	informacion_t juego = { .personaje = &jugador, .tablero= tablero,
+				.movimientos = movimientos, .pokemones_seleccionados = objetivos_pokemones,
+				.pokemones_eliminados = pokemones_eliminados, 
+				.banderas = banderas, .pokemones_capturados = pokemones_capturados,
+				.grupos_formados = grupos_formados};
 	tablero_colocar_elemento(tablero, 0, 0, MI_CARACTER, ANSI_COLOR_WHITE);
 	game_loop(logica_juego, (void *)&juego);
 	mostrar_cursor();

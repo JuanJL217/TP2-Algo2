@@ -19,7 +19,7 @@ struct tablero {
 
 tablero_t *tablero_crear(size_t filas, size_t columnas)
 {
-    if (filas == 0 || columnas == 0)
+    if (filas < 10 || columnas < 10)
         return NULL;
     
     tablero_t *tablero = calloc(1, sizeof(tablero_t));
@@ -94,26 +94,11 @@ bool tablero_mover_elemento(tablero_t* tablero, size_t f_origen, size_t c_origen
     return true;
 }
 
-
-// bool obtener_posicion(tablero_t* tablero, size_t filas, size_t columnas)
-// {
-//     if (!tablero)
-//         return false;
-    
-// }
-// 000
-// cebolla
-// tomate
-// zanahoria
-// huevos
-// atun
-// sal
-
-
 void tablero_mostrar(tablero_t* tablero)
 {	
     if (!tablero)
         return;
+    printf(" ");
     for (size_t fila = 0; fila < tablero->columnas; fila++) {
         printf("-");
     }
@@ -121,15 +106,16 @@ void tablero_mostrar(tablero_t* tablero)
     for (size_t fila = 0; fila < tablero->filas; fila++) {
         printf("|");
         for (size_t columna = 0; columna < tablero->columnas; columna++) {
-            printf(" %s%c%s ", tablero->tabla[fila][columna].color, tablero->tabla[fila][columna].elemento, ANSI_COLOR_RESET);
+            printf("%s%c%s", tablero->tabla[fila][columna].color, tablero->tabla[fila][columna].elemento, ANSI_COLOR_RESET);
         }
         printf("|");
         printf("\n");
     }
+    printf(" ");
     for (size_t fila = 0; fila < tablero->columnas; fila++) {
         printf("-");
     }
-    printf("\n"); // Aquí se agrega el salto de línea final
+    printf("\n");
 }
 
 
