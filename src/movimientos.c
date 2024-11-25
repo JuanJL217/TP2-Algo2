@@ -13,12 +13,12 @@ typedef struct {
 struct movimientos {
 	size_t limite_columna;
 	size_t limite_fila;
-	hash_t* diccionario_movimientos;
+	hash_t *diccionario_movimientos;
 };
 
-movimientos_t* crear_movimiento(size_t limite_y, size_t limite_x)
+movimientos_t *crear_movimiento(size_t limite_y, size_t limite_x)
 {
-	movimientos_t* movimientos = calloc(1, sizeof(movimientos_t));
+	movimientos_t *movimientos = calloc(1, sizeof(movimientos_t));
 	if (!movimientos)
 		return NULL;
 	movimientos->limite_columna = limite_x;
@@ -36,7 +36,8 @@ size_t movimientos_cantidad(movimientos_t *movimientos)
 	return hash_cantidad(movimientos->diccionario_movimientos);
 }
 
-void movimiento_norte(char* nada1, char* nada2, size_t *fila, size_t *columna, size_t limite_y, size_t limite_x)
+void movimiento_norte(char *nada1, char *nada2, size_t *fila, size_t *columna,
+		      size_t limite_y, size_t limite_x)
 {
 	if (!fila || !columna)
 		return;
@@ -45,7 +46,8 @@ void movimiento_norte(char* nada1, char* nada2, size_t *fila, size_t *columna, s
 	}
 }
 
-void movimiento_sur(char* nada1, char* nada2, size_t *fila, size_t *columna, size_t limite_y, size_t limite_x)
+void movimiento_sur(char *nada1, char *nada2, size_t *fila, size_t *columna,
+		    size_t limite_y, size_t limite_x)
 {
 	if (!fila || !columna)
 		return;
@@ -54,7 +56,8 @@ void movimiento_sur(char* nada1, char* nada2, size_t *fila, size_t *columna, siz
 	}
 }
 
-void movimiento_este(char* nada1, char* nada2, size_t *fila, size_t *columna, size_t limite_y, size_t limite_x)
+void movimiento_este(char *nada1, char *nada2, size_t *fila, size_t *columna,
+		     size_t limite_y, size_t limite_x)
 {
 	if (!fila || !columna)
 		return;
@@ -63,7 +66,8 @@ void movimiento_este(char* nada1, char* nada2, size_t *fila, size_t *columna, si
 	}
 }
 
-void movimiento_oeste(char* nada1, char* nada2, size_t *fila, size_t *columna, size_t limite_y, size_t limite_x)
+void movimiento_oeste(char *nada1, char *nada2, size_t *fila, size_t *columna,
+		      size_t limite_y, size_t limite_x)
 {
 	if (!fila || !columna)
 		return;
@@ -72,7 +76,9 @@ void movimiento_oeste(char* nada1, char* nada2, size_t *fila, size_t *columna, s
 	}
 }
 
-void movimiento_igual(char* movimiento_anterior, char* movimiento_hacer, size_t *fila, size_t *columna, size_t limite_y, size_t limite_x)
+void movimiento_igual(char *movimiento_anterior, char *movimiento_hacer,
+		      size_t *fila, size_t *columna, size_t limite_y,
+		      size_t limite_x)
 {
 	if (*movimiento_anterior == 'N') {
 		movimiento_norte(NULL, NULL, fila, columna, limite_y, limite_x);
@@ -85,7 +91,9 @@ void movimiento_igual(char* movimiento_anterior, char* movimiento_hacer, size_t 
 	}
 }
 
-void movimiento_invertido(char* movimiento_anterior, char* movimiento_hacer, size_t *fila, size_t *columna, size_t limite_y, size_t limite_x)
+void movimiento_invertido(char *movimiento_anterior, char *movimiento_hacer,
+			  size_t *fila, size_t *columna, size_t limite_y,
+			  size_t limite_x)
 {
 	if (*movimiento_anterior == 'N') {
 		movimiento_sur(NULL, NULL, fila, columna, limite_y, limite_x);
@@ -98,7 +106,9 @@ void movimiento_invertido(char* movimiento_anterior, char* movimiento_hacer, siz
 	}
 }
 
-void movimiento_al_azar(char* movimiento_anterior, char* movimiento_hacer, size_t *fila, size_t *columna, size_t limite_y, size_t limite_x)
+void movimiento_al_azar(char *movimiento_anterior, char *movimiento_hacer,
+			size_t *fila, size_t *columna, size_t limite_y,
+			size_t limite_x)
 {
 	srand((unsigned int)time(NULL));
 	int movimiento_random = rand() % 4;
@@ -113,7 +123,8 @@ void movimiento_al_azar(char* movimiento_anterior, char* movimiento_hacer, size_
 	}
 }
 
-bool movimiento_realizar(movimientos_t* movimientos, char* movimiento_anterior, char* movimiento_hacer, size_t* fila, size_t* columna)
+bool movimiento_realizar(movimientos_t *movimientos, char *movimiento_anterior,
+			 char *movimiento_hacer, size_t *fila, size_t *columna)
 {
 	if (!movimientos || !fila || !columna) {
 		return false;
@@ -122,7 +133,8 @@ bool movimiento_realizar(movimientos_t* movimientos, char* movimiento_anterior, 
 		movimientos->diccionario_movimientos, movimiento_hacer);
 	if (!func)
 		return false;
-	func->funcion(movimiento_anterior, movimiento_hacer, fila, columna, movimientos->limite_fila, movimientos->limite_columna);
+	func->funcion(movimiento_anterior, movimiento_hacer, fila, columna,
+		      movimientos->limite_fila, movimientos->limite_columna);
 	return true;
 }
 
@@ -132,10 +144,10 @@ void destruir_funciones(void *_funciones)
 	free(funciones);
 }
 
-bool cargar_movimientos(movimientos_t* movimientos)
+bool cargar_movimientos(movimientos_t *movimientos)
 {
 	if (!movimientos) {
-		return false; 
+		return false;
 	}
 
 	funcion_movimiento_t *norte = calloc(1, sizeof(funcion_movimiento_t));
@@ -143,10 +155,12 @@ bool cargar_movimientos(movimientos_t* movimientos)
 	funcion_movimiento_t *este = calloc(1, sizeof(funcion_movimiento_t));
 	funcion_movimiento_t *oeste = calloc(1, sizeof(funcion_movimiento_t));
 	funcion_movimiento_t *igual = calloc(1, sizeof(funcion_movimiento_t));
-	funcion_movimiento_t *invertido = calloc(1, sizeof(funcion_movimiento_t));
+	funcion_movimiento_t *invertido =
+		calloc(1, sizeof(funcion_movimiento_t));
 	funcion_movimiento_t *azar = calloc(1, sizeof(funcion_movimiento_t));
 
-	if (!norte || !sur || !este || !oeste || !igual || !invertido || !azar) {
+	if (!norte || !sur || !este || !oeste || !igual || !invertido ||
+	    !azar) {
 		free(norte);
 		free(sur);
 		free(este);
@@ -170,19 +184,21 @@ bool cargar_movimientos(movimientos_t* movimientos)
 	hash_insertar(movimientos->diccionario_movimientos, "E", este, NULL);
 	hash_insertar(movimientos->diccionario_movimientos, "O", oeste, NULL);
 	hash_insertar(movimientos->diccionario_movimientos, "J", igual, NULL);
-	hash_insertar(movimientos->diccionario_movimientos, "I", invertido, NULL);
+	hash_insertar(movimientos->diccionario_movimientos, "I", invertido,
+		      NULL);
 	hash_insertar(movimientos->diccionario_movimientos, "R", azar, NULL);
 
-	if (hash_cantidad(movimientos->diccionario_movimientos) != CANTIDAD_MOVIMIENTOS) {
+	if (hash_cantidad(movimientos->diccionario_movimientos) !=
+	    CANTIDAD_MOVIMIENTOS) {
 		return false;
 	}
 
 	return true; // Si todo fue correcto, retornar true
 }
 
-
 void movimientos_destruir(movimientos_t *movimientos)
 {
-	hash_destruir_todo(movimientos->diccionario_movimientos, destruir_funciones);
+	hash_destruir_todo(movimientos->diccionario_movimientos,
+			   destruir_funciones);
 	free(movimientos);
 }

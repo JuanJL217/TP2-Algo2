@@ -10,27 +10,26 @@ typedef hash_t colores_t;
 /**
  *
  */
-colores_t* colores_crear();
+colores_t *colores_crear();
 
 /**
  * 
  */
-bool colores_cargar(colores_t* colores);
+bool colores_cargar(colores_t *colores);
 
 /**
  * 
  */
-size_t colores_cantidad(colores_t* colores);
+size_t colores_cantidad(colores_t *colores);
 
 /**
  * 
  */
-char* color_obtener(colores_t* colores, char* color);
+char *color_obtener(colores_t *colores, char *color);
 
 /**
  * 
  */
-void colores_destruir(colores_t*);
-
+void colores_destruir(colores_t *);
 
 #endif // CSV_H

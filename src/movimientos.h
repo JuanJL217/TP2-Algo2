@@ -7,13 +7,14 @@
 
 typedef struct movimientos movimientos_t;
 
-movimientos_t* crear_movimiento(size_t limite_x, size_t limite_y);
+movimientos_t *crear_movimiento(size_t limite_x, size_t limite_y);
 
-bool cargar_movimientos(movimientos_t* movimientos);
+bool cargar_movimientos(movimientos_t *movimientos);
 
 size_t movimientos_cantidad(movimientos_t *movimientos);
 
-bool movimiento_realizar(movimientos_t* movimientos, char* movimiento_pivote, char* tipo_movimiento, size_t* fila, size_t* columna);
+bool movimiento_realizar(movimientos_t *movimientos, char *movimiento_pivote,
+			 char *tipo_movimiento, size_t *fila, size_t *columna);
 
 void movimientos_destruir(movimientos_t *movimientos);
 

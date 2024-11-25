@@ -3,12 +3,12 @@
 
 const size_t CANTIDAD_COLORES = 8;
 
-colores_t* colores_crear()
+colores_t *colores_crear()
 {
-    return hash_crear(15);
+	return hash_crear(15);
 }
 
-bool colores_cargar(colores_t* colores)
+bool colores_cargar(colores_t *colores)
 {
 	hash_insertar(colores, "ROJO", ANSI_COLOR_RED, NULL);
 	hash_insertar(colores, "AZUL", ANSI_COLOR_BLUE, NULL);
@@ -23,20 +23,20 @@ bool colores_cargar(colores_t* colores)
 		hash_destruir(colores);
 		return false;
 	}
-    return true;
+	return true;
 }
 
-size_t colores_cantidad(colores_t* colores)
+size_t colores_cantidad(colores_t *colores)
 {
-    return hash_cantidad(colores);
+	return hash_cantidad(colores);
 }
 
-char* color_obtener(colores_t* colores, char* color)
+char *color_obtener(colores_t *colores, char *color)
 {
-    return (char*)hash_buscar(colores, color);
+	return (char *)hash_buscar(colores, color);
 }
 
-void colores_destruir(colores_t* colores)
+void colores_destruir(colores_t *colores)
 {
-    hash_destruir(colores);
+	hash_destruir(colores);
 }
