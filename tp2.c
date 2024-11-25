@@ -8,8 +8,9 @@
 #include "src/pokedex.h"
 #include "src/colores.h"
 #include "src/logica.h"
+#include "src/verificaciones.h"
 
-const size_t CANTIDAD_OPCIONES = 4;
+const size_t CANTIDAD_OPCIONES = 5;
 
 bool imprimir_opciones(void *_opcion, void *nada)
 {
@@ -20,20 +21,13 @@ bool imprimir_opciones(void *_opcion, void *nada)
 	return true;
 }
 
-bool es_caracter(char *texto)
-{
-	if (fgets(texto, sizeof(texto), stdin) == NULL)
-		return false;
-	texto[strcspn(texto, "\n")] = '\0';
-	return strlen(texto) == 1;
-}
-
 bool agregar_opciones_al_menu(menu_t *menu)
 {	
 	menu_ingresar_opcion(menu, 'P', "Mostrar pokedex", mostrar_pokemones);
 	menu_ingresar_opcion(menu, 'J', "Iniciar juego", jugar_partida);
 	menu_ingresar_opcion(menu, 'S', "Iniciar juego con semilla",
 			     jugar_con_semilla);
+	menu_ingresar_opcion(menu, 'O', "Otras opciones", opciones_jugar);
 	menu_ingresar_opcion(menu, 'Q', "Salir", salir_del_menu);
 
 	if (menu_cantidad(menu) != CANTIDAD_OPCIONES) {
@@ -62,13 +56,18 @@ int main()
 	}
 
 	if (!agregar_opciones_al_menu(menu)) {
-		printf("Fallo en la creación de las opciones");
+		printf("Fallo en la creación de las opciones del menu");
 		return -2;
 	}
 	booleanos banderas = { .menu_seguir = true,
+				   .opciones_seguir = false,
 			       .pokedex = NULL,
 			       .colores = NULL,
-				   .semilla = NULL};
+				   .semilla = NULL,
+				   .cantidad_objetivos = 7,
+				   .cantidad_filas = 15,
+				   .cantidad_columas = 32,
+				   .tiempo_maximo = 60};
 	char texto[MAX_CARACTERES];
 	while (banderas.menu_seguir) {
 		menu_iterar_opciones(menu, imprimir_opciones, NULL);

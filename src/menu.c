@@ -2,6 +2,7 @@
 #include "lista.h"
 #include "csv.h"
 #include <string.h>
+#include <stdio.h>
 
 opcion_menu_t *crear_opcion(const char indice, const char *texto,
 			    bool (*accion)(void *))

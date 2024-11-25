@@ -1,21 +1,19 @@
 #ifndef MOVIMIENTOS_H
-#define MOVIMIENTOS_G
+#define MOVIMIENTOS_H
 
-#include <stdlib.h>
-#include <stdbool.h>
 #include "hash.h"
 
-typedef struct movimientos movimientos_t;
+typedef hash_t movimientos_t;
 
-movimientos_t *crear_movimiento(size_t limite_x, size_t limite_y);
+movimientos_t* movimientos_crear();
 
-bool cargar_movimientos(movimientos_t *movimientos);
+bool movimientos_agregar(movimientos_t* movimientos, char *clave, void (*funcion)(char *, char *, size_t *, size_t *, size_t, size_t));
 
 size_t movimientos_cantidad(movimientos_t *movimientos);
 
-bool movimiento_realizar(movimientos_t *movimientos, char *movimiento_pivote,
-			 char *tipo_movimiento, size_t *fila, size_t *columna);
+bool movimiento_realizar(movimientos_t *movimientos, char *movimiento_externo,
+		char *movimiendo_realizar, size_t *fila, size_t *columna, size_t fila_limite, size_t columna_limite);
 
 void movimientos_destruir(movimientos_t *movimientos);
 
-#endif // PILA_H_
+#endif // MOVIMIENTOS_H

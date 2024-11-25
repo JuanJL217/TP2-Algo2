@@ -7,9 +7,14 @@
 
 typedef struct booleanos {
 	bool menu_seguir;
+	bool opciones_seguir;
 	pokedex_t *pokedex;
 	colores_t *colores;
 	size_t *semilla;
+	size_t cantidad_objetivos;
+	size_t cantidad_filas;
+	size_t cantidad_columas;
+	size_t tiempo_maximo;
 } booleanos;
 
 /**
@@ -30,6 +35,11 @@ bool jugar_con_semilla(void *banderas);
 /**
  * 
  */
+bool opciones_jugar(void* banderas);
+
+/**
+ * 
+ */
 bool salir_del_menu(void *banderas);
 
-#endif // SPLIT_H_
+#endif // LOGICA_H

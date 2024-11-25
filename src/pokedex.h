@@ -1,8 +1,6 @@
 #ifndef POKEDEX_H
 #define POKEDEX_H
 
-#include <stdlib.h>
-#include <stdbool.h>
 #include "abb.h"
 
 /**
@@ -30,7 +28,7 @@ pokedex_t *pokedex_crear();
  *Se ingresa una opcion y una acción relacionada.
  *Si hubo error, retorna false.
  */
-bool pokedex_cargar(pokedex_t *pokedex, char *archivo, char separador);
+bool pokedex_insertar_pokemon(pokedex_t* pokedex, pokemon_t* pokemon);
 
 /**
  *Se itera las opciones en orden de insersion

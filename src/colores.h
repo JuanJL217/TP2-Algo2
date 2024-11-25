@@ -1,8 +1,6 @@
 #ifndef COLORES_H
 #define COLORES_H
 
-#include <stdlib.h>
-#include <stdbool.h>
 #include "hash.h"
 
 typedef hash_t colores_t;
@@ -15,7 +13,8 @@ colores_t *colores_crear();
 /**
  * 
  */
-bool colores_cargar(colores_t *colores);
+bool colores_agregar(colores_t* colores, char* color, char* codigo);
+
 
 /**
  * 

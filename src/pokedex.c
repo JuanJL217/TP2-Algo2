@@ -4,6 +4,8 @@
 #include "abb.h"
 #include "lista.h"
 #include "csv.h"
+#include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct pokemon_posicion {
 	pokemon_t *pokemon;
@@ -18,69 +20,14 @@ int comparar_nombres_pokemon(void* _poke1, void* _poke2)
 	return strcmp(pokemon1->nombre, pokemon2->nombre);
 }
 
-bool agregar_cadena(const char *str, void *ctx)
-{
-	char *nuevo = malloc(strlen(str) + 1);
-	if (!nuevo) {
-		return false;
-	}
-	strcpy(nuevo, str);
-	*(char **)ctx = nuevo;
-	return true;
-}
-
-bool agregar_numero(const char *str, void *ctx)
-{
-	return sscanf(str, "%d", (int *)ctx) == 1;
-}
-
 pokedex_t *pokedex_crear()
 {
 	return abb_crear(comparar_nombres_pokemon);
 }
 
-bool pokedex_cargar(pokedex_t *pokedex, char *archivo, char separador)
+bool pokedex_insertar_pokemon(pokedex_t* pokedex, pokemon_t* pokemon)
 {
-	struct archivo_csv *archivo_pokemones =
-		abrir_archivo_csv((const char*)archivo, separador);
-	if (!archivo_pokemones) {
-		return false;
-	}
-
-	pokemon_t pokemon;
-	pokemon.nombre = NULL;
-	pokemon.color = NULL;
-	pokemon.movimientos = NULL;
-
-	void* punteros[] = {&pokemon.nombre, &pokemon.puntaje, &pokemon.color, &pokemon.movimientos};
-
-	bool (*funciones[])(const char *, void *) = { agregar_cadena, agregar_numero, agregar_cadena,
-				agregar_cadena};
-
-	size_t lineas_leidas = 0;
-	while (leer_linea_csv(archivo_pokemones, 4, funciones,
-			      punteros) == 4) {
-		pokemon_t *nueva_ubicacion_pokemon = malloc(sizeof(pokemon_t));
-		if (!nueva_ubicacion_pokemon) {
-			cerrar_archivo_csv(archivo_pokemones);
-			return false;
-		}
-		*nueva_ubicacion_pokemon = pokemon;
-		if (!abb_insertar(pokedex,
-				  (void *)nueva_ubicacion_pokemon)) {
-			cerrar_archivo_csv(archivo_pokemones);
-			return false;
-		}
-		lineas_leidas++;
-	}
-
-	cerrar_archivo_csv(archivo_pokemones);
-
-	if (lineas_leidas == 0) {
-		return false;
-	}
-
-	return true;
+	return abb_insertar(pokedex, (void*)pokemon);
 }
 
 size_t pokedex_cantidad(pokedex_t *pokedex)
