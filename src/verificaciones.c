@@ -22,3 +22,8 @@ bool es_numero(char *texto) {
     }
     return true;
 }
+
+char caracter_mayuscula(char* texto)
+{
+    return (char)toupper((unsigned char)texto[0]);
+}

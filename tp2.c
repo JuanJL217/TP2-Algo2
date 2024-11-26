@@ -10,7 +10,7 @@
 #include "src/logica.h"
 #include "src/verificaciones.h"
 
-const size_t CANTIDAD_OPCIONES = 5;
+const size_t CANTIDAD_OPCIONES = 6;
 
 bool imprimir_opciones(void *_opcion, void *nada)
 {
@@ -28,6 +28,7 @@ bool agregar_opciones_al_menu(menu_t *menu)
 	menu_ingresar_opcion(menu, 'S', "Iniciar juego con semilla",
 			     jugar_con_semilla);
 	menu_ingresar_opcion(menu, 'O', "Otras opciones", opciones_jugar);
+	menu_ingresar_opcion(menu, 'R', "Restablecer valores predeterminados", restablecer_valores);
 	menu_ingresar_opcion(menu, 'Q', "Salir", salir_del_menu);
 
 	if (menu_cantidad(menu) != CANTIDAD_OPCIONES) {

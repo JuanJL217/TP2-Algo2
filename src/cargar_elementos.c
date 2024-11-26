@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-const size_t CANTIDAD_COLORES = 8;
 const char* NOMBRE_ARCHIVO = "pokedex.csv";
 const char SEPARADOR = ',';
 
@@ -95,8 +94,8 @@ colores_t* colores_cargados()
 	colores_agregar(colores, "CIAN", ANSI_COLOR_CYAN);
 	colores_agregar(colores, "BLANCO", ANSI_COLOR_WHITE);
 
-	if (hash_cantidad(colores) != CANTIDAD_COLORES) {
-		hash_destruir(colores);
+	if (colores_cantidad(colores) != 8) {
+		colores_destruir(colores);
 		return NULL;
 	}
 	return colores;
@@ -194,15 +193,17 @@ movimientos_t* movimientos_cargados() {
     if (!movimientos)
         return NULL;
 
-    if (!movimientos_agregar(movimientos, "N", movimiento_norte) ||
-        !movimientos_agregar(movimientos, "S", movimiento_sur) ||
-        !movimientos_agregar(movimientos, "E", movimiento_este) ||
-        !movimientos_agregar(movimientos, "O", movimiento_oeste) ||
-        !movimientos_agregar(movimientos, "J", movimiento_igual) ||
-        !movimientos_agregar(movimientos, "I", movimiento_invertido) ||
-        !movimientos_agregar(movimientos, "R", movimiento_al_azar)) {
-        movimientos_destruir(movimientos);
+    movimientos_agregar(movimientos, "N", movimiento_norte);
+	movimientos_agregar(movimientos, "S", movimiento_sur);
+    movimientos_agregar(movimientos, "E", movimiento_este);
+    movimientos_agregar(movimientos, "O", movimiento_oeste);
+    movimientos_agregar(movimientos, "J", movimiento_igual);
+    movimientos_agregar(movimientos, "I", movimiento_invertido);
+    movimientos_agregar(movimientos, "R", movimiento_al_azar);
+
+	if (movimientos_cantidad(movimientos) != 7) {
+	    movimientos_destruir(movimientos);
         return NULL;
-    }
+	}
     return movimientos;
 }

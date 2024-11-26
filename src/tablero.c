@@ -1,8 +1,6 @@
 #include "tablero.h"
 #include <stdio.h>
-
-#define ANSI_COLOR_BLACK "\x1b[30m"
-#define ANSI_COLOR_RESET "\x1b[0m"
+#include "../extra/ansi.h"
 
 const char ESPACIO_VACIO = ' ';
 
@@ -100,30 +98,31 @@ bool tablero_mover_elemento(tablero_t *tablero, size_t f_origen,
 }
 
 void tablero_mostrar(tablero_t *tablero)
-{
+{	
+	char* color = ANSI_COLOR_GREEN;
 	if (!tablero)
 		return;
-	printf(" ");
+	printf("%s┏%s", color, ANSI_COLOR_RESET);
 	for (size_t fila = 0; fila < tablero->columnas; fila++) {
-		printf("-");
+		printf("%s━%s", color, ANSI_COLOR_RESET);
 	}
-	printf("\n");
+	printf("%s┓%s\n", color, ANSI_COLOR_RESET);
 	for (size_t fila = 0; fila < tablero->filas; fila++) {
-		printf("|");
+		printf("%s┃%s", color, ANSI_COLOR_RESET);
 		for (size_t columna = 0; columna < tablero->columnas;
 		     columna++) {
 			printf("%s%c%s", tablero->tabla[fila][columna].color,
 			       tablero->tabla[fila][columna].elemento,
 			       ANSI_COLOR_RESET);
 		}
-		printf("|");
+		printf("%s┃%s", color, ANSI_COLOR_RESET);
 		printf("\n");
 	}
-	printf(" ");
+	printf("%s┗%s", color, ANSI_COLOR_RESET);
 	for (size_t fila = 0; fila < tablero->columnas; fila++) {
-		printf("-");
+		printf("%s━%s", color, ANSI_COLOR_RESET);
 	}
-	printf("\n");
+	printf("%s┛%s\n", color, ANSI_COLOR_RESET);
 }
 
 void tablero_destruir(tablero_t *tablero)
