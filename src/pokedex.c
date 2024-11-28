@@ -36,9 +36,9 @@ size_t pokedex_cantidad(pokedex_t *pokedex)
 }
 
 size_t pokedex_iterar(pokedex_t *pokedex,
-		      bool (*funcion_mostrar)(void *, void *), void *ctx)
+		      bool (*funcion_mostrar)(pokemon_t *, void *), void *ctx)
 {
-	return abb_iterar_inorden(pokedex, funcion_mostrar, ctx);
+	return abb_iterar_inorden(pokedex, (bool (*)(void *, void *))funcion_mostrar, ctx);
 }
 
 bool buscar_pokemon_en_orden(void *_pokemon, void *_posicion)
@@ -64,16 +64,12 @@ pokemon_t *pokedex_obtener_pokemon(pokedex_t *pokedex, size_t posicion)
 	return ubicacion.pokemon;
 }
 
-void destruir_pokemones(void* _pokemones)
-{
-	pokemon_t* pokemon = (pokemon_t*)_pokemones;
-	free(pokemon->nombre);
-	free(pokemon->color);
-	free(pokemon->movimientos);
-	free(pokemon);
-}
-
 void pokedex_destruir(pokedex_t *pokedex)
 {
-	abb_destruir_todo(pokedex, destruir_pokemones);
+	abb_destruir(pokedex);
+}
+
+void pokedex_destruir_todo(pokedex_t *pokedex, void (*eliminar_pokemon)(pokemon_t*))
+{
+	abb_destruir_todo(pokedex, (void (*)(void *))eliminar_pokemon);
 }

@@ -78,113 +78,106 @@ pokedex_t* pokedex_cargada()
 	return pokedex;
 }
 
-colores_t* colores_cargados()
+hash_t* colores_cargados()
 {   
-    colores_t* colores = colores_crear();
+    hash_t* colores = hash_crear(15);
     if (!colores) {
         return NULL;
     }
 
-	colores_agregar(colores, "ROJO", ANSI_COLOR_RED);
-	colores_agregar(colores, "AZUL", ANSI_COLOR_BLUE);
-	colores_agregar(colores, "VERDE", ANSI_COLOR_GREEN);
-	colores_agregar(colores, "MAGENTA", ANSI_COLOR_MAGENTA);
-	colores_agregar(colores, "AMARILLO", ANSI_COLOR_YELLOW);
-	colores_agregar(colores, "NEGRO", ANSI_COLOR_BLACK);
-	colores_agregar(colores, "CIAN", ANSI_COLOR_CYAN);
-	colores_agregar(colores, "BLANCO", ANSI_COLOR_WHITE);
+	hash_insertar(colores, "ROJO", ANSI_COLOR_RED, NULL);
+	hash_insertar(colores, "AZUL", ANSI_COLOR_BLUE, NULL);
+	hash_insertar(colores, "VERDE", ANSI_COLOR_GREEN, NULL);
+	hash_insertar(colores, "MAGENTA", ANSI_COLOR_MAGENTA, NULL);
+	hash_insertar(colores, "AMARILLO", ANSI_COLOR_YELLOW, NULL);
+	hash_insertar(colores, "NEGRO", ANSI_COLOR_BLACK, NULL);
+	hash_insertar(colores, "CIAN", ANSI_COLOR_CYAN, NULL);
+	hash_insertar(colores, "BLANCO", ANSI_COLOR_WHITE, NULL);
 
-	if (colores_cantidad(colores) != 8) {
-		colores_destruir(colores);
+	if (hash_cantidad(colores) != 8) {
+		hash_destruir(colores);
 		return NULL;
 	}
 	return colores;
 }
 
-void movimiento_norte(char *nada1, char *nada2, size_t *fila, size_t *columna,
-		      size_t limite_y, size_t limite_x)
+void movimiento_norte(char *nada1, size_t *fila, size_t *columna, size_t limite_y, size_t limite_x)
 {
-	if (!fila || !columna)
+	if (!fila)
 		return;
 	if (*fila > 0) {
 		(*fila)--;
 	}
 }
 
-void movimiento_sur(char *nada1, char *nada2, size_t *fila, size_t *columna,
+void movimiento_sur(char *nada1, size_t *fila, size_t *columna,
 		    size_t limite_y, size_t limite_x)
 {
-	if (!fila || !columna)
+	if (!fila)
 		return;
 	if (*fila < limite_y - 1) {
 		(*fila)++;
 	}
 }
 
-void movimiento_este(char *nada1, char *nada2, size_t *fila, size_t *columna,
-		     size_t limite_y, size_t limite_x)
+void movimiento_este(char *nada1, size_t *fila, size_t *columna, size_t limite_y, size_t limite_x)
 {
-	if (!fila || !columna)
+	if (!columna)
 		return;
 	if (*columna < limite_x - 1) {
 		(*columna)++;
 	}
 }
 
-void movimiento_oeste(char *nada1, char *nada2, size_t *fila, size_t *columna,
-		      size_t limite_y, size_t limite_x)
+void movimiento_oeste(char *nada1, size_t *fila, size_t *columna, size_t limite_y, size_t limite_x)
 {
-	if (!fila || !columna)
+	if (!columna)
 		return;
 	if (*columna > 0) {
 		(*columna)--;
 	}
 }
 
-void movimiento_igual(char *movimiento_anterior, char *movimiento_hacer,
-		      size_t *fila, size_t *columna, size_t limite_y,
+void movimiento_igual(char *movimiento_anterior, size_t *fila, size_t *columna, size_t limite_y,
 		      size_t limite_x)
 {
 	if (*movimiento_anterior == 'N') {
-		movimiento_norte(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_norte(NULL, fila, columna, limite_y, limite_x);
 	} else if (*movimiento_anterior == 'S') {
-		movimiento_sur(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_sur(NULL, fila, columna, limite_y, limite_x);
 	} else if (*movimiento_anterior == 'E') {
-		movimiento_este(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_este(NULL, fila, columna, limite_y, limite_x);
 	} else if (*movimiento_anterior == 'O') {
-		movimiento_oeste(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_oeste(NULL, fila, columna, limite_y, limite_x);
 	}
 }
 
-void movimiento_invertido(char *movimiento_anterior, char *movimiento_hacer,
-			  size_t *fila, size_t *columna, size_t limite_y,
+void movimiento_invertido(char *movimiento_anterior, size_t *fila, size_t *columna, size_t limite_y,
 			  size_t limite_x)
 {
 	if (*movimiento_anterior == 'N') {
-		movimiento_sur(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_sur(NULL, fila, columna, limite_y, limite_x);
 	} else if (*movimiento_anterior == 'S') {
-		movimiento_norte(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_norte(NULL, fila, columna, limite_y, limite_x);
 	} else if (*movimiento_anterior == 'E') {
-		movimiento_oeste(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_oeste(NULL, fila, columna, limite_y, limite_x);
 	} else if (*movimiento_anterior == 'O') {
-		movimiento_este(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_este(NULL, fila, columna, limite_y, limite_x);
 	}
 }
 
-void movimiento_al_azar(char *movimiento_anterior, char *movimiento_hacer,
-			size_t *fila, size_t *columna, size_t limite_y,
+void movimiento_al_azar(char *movimiento_anterior, size_t *fila, size_t *columna, size_t limite_y,
 			size_t limite_x)
 {
-	srand((unsigned int)time(NULL));
 	int movimiento_random = rand() % 4;
 	if (movimiento_random == 0) {
-		movimiento_norte(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_norte(NULL, fila, columna, limite_y, limite_x);
 	} else if (movimiento_random == 1) {
-		movimiento_sur(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_sur(NULL, fila, columna, limite_y, limite_x);
 	} else if (movimiento_random == 2) {
-		movimiento_este(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_este(NULL, fila, columna, limite_y, limite_x);
 	} else if (movimiento_random == 3) {
-		movimiento_oeste(NULL, NULL, fila, columna, limite_y, limite_x);
+		movimiento_oeste(NULL, fila, columna, limite_y, limite_x);
 	}
 }
 

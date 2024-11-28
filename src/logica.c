@@ -8,7 +8,6 @@
 #include "lista.h"
 #include "pokedex.h"
 #include "tablero.h"
-#include "colores.h"
 #include "logica.h"
 #include "movimientos.h"
 #include "pila.h"
@@ -63,11 +62,42 @@ typedef struct juego {
 	informacion_t *informacion;
 } juego_t;
 
-bool imprimir_pokemones(void *_pokemon, void *_colores)
+void dibujar_tablero(tablero_t *tablero)
+{	
+	char* color_bordes = ANSI_COLOR_GREEN;
+	size_t cantidad_filas = tablero_cantidad_filas(tablero);
+	size_t cantidad_columnas = tablero_cantidad_columnas(tablero);
+	
+	printf("%s┏%s", color_bordes, ANSI_COLOR_RESET);
+	for (size_t columna = 0; columna < cantidad_columnas; columna++) {
+		printf("%s━%s", color_bordes, ANSI_COLOR_RESET);
+	}
+	printf("%s┓%s\n", color_bordes, ANSI_COLOR_RESET);
+
+	for (size_t fila = 0; fila < cantidad_filas; fila++) {
+		printf("%s┃%s", color_bordes, ANSI_COLOR_RESET);
+		for (size_t columna = 0; columna < cantidad_columnas;
+		     columna++) {
+			char caracter;
+			char* color_caracter;
+			tablero_posicion_informacion(tablero, fila, columna, &caracter, &color_caracter);
+			printf("%s%c%s", color_caracter, caracter, ANSI_COLOR_RESET);
+		}
+		printf("%s┃%s", color_bordes, ANSI_COLOR_RESET);
+		printf("\n");
+	}
+
+	printf("%s┗%s", color_bordes, ANSI_COLOR_RESET);
+	for (size_t columna = 0; columna < cantidad_columnas; columna++) {
+		printf("%s━%s", color_bordes, ANSI_COLOR_RESET);
+	}
+	printf("%s┛%s\n", color_bordes, ANSI_COLOR_RESET);
+}
+
+bool imprimir_pokemones(pokemon_t *pokemon, void *_colores)
 {
-	pokemon_t *pokemon = (pokemon_t *)_pokemon;
-	colores_t *colores = (colores_t *)_colores;
-	char *color = color_obtener(colores, pokemon->color);
+	hash_t *colores = (hash_t *)_colores;
+	char *color = hash_buscar(colores, pokemon->color);
 	printf("  %s~%s %s%s (%s) -> %s%d puntos\n", color, ANSI_COLOR_RESET,
 	       color, pokemon->nombre, pokemon->movimientos, ANSI_COLOR_RESET,
 	       pokemon->puntaje);
@@ -138,7 +168,7 @@ bool movimientos_pokemones(void *_pokemon, void *_dato)
 	return true;
 }
 
-bool seleccion_de_pokemon(pokedex_t *pokedex, colores_t *colores,
+bool seleccion_de_pokemon(pokedex_t *pokedex, hash_t *colores,
 			  Lista *seleccionados, tablero_t *tablero)
 {
 	size_t fila = 1 + (size_t)rand() % tablero_cantidad_filas(tablero);
@@ -147,7 +177,7 @@ bool seleccion_de_pokemon(pokedex_t *pokedex, colores_t *colores,
 	size_t posicion_pokemon = (size_t)rand() % pokedex_cantidad(pokedex);
 	pokemon_t *pokemon =
 		pokedex_obtener_pokemon(pokedex, posicion_pokemon);
-	char *color_obtenido = color_obtener(colores, pokemon->color);
+	char *color_obtenido = hash_buscar(colores, pokemon->color);
 	pokemon_seleccionado *pokemon_objetivo =
 		calloc(1, sizeof(pokemon_seleccionado));
 	if (!pokemon_objetivo) {
@@ -261,14 +291,14 @@ void mostrar_informacion_por_pantalla(size_t *tiempo, size_t tiempo_maximo, Pila
 				      usuario *usuario, tablero_t *tablero)
 {
 	(*tiempo)++;
-	if ((tiempo_maximo - (*tiempo/5)) > 5) {
+	if ((tiempo_maximo - (*tiempo/5)) > 10) {
 		printf("⏳%s%li%s\n", ANSI_COLOR_BLUE, tiempo_maximo - (*tiempo/5), ANSI_COLOR_RESET);
 	} else {
 		printf("⌛%s%li%s\n", ANSI_COLOR_RED, tiempo_maximo - (*tiempo/5), ANSI_COLOR_RESET);	
 	}
 	printf("👣%s%li%s 💲%s%li%s %s(x%li)%s\n", ANSI_COLOR_BLUE, usuario->cantidad_pasos, ANSI_COLOR_RESET, 
 	ANSI_COLOR_GREEN, usuario->puntaje, ANSI_COLOR_RESET, ANSI_COLOR_YELLOW, usuario->multiplicador, ANSI_COLOR_RESET);
-	tablero_mostrar(tablero);
+	dibujar_tablero(tablero);
 	if (!pila_esta_vacía(capturados)) {
 		pokemon_seleccionado *pokemon =
 			(pokemon_seleccionado *)pila_tope(capturados);

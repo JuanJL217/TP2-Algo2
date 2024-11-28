@@ -4,9 +4,9 @@
 #include <ctype.h>
 #include "extra/engine.h"
 #include "extra/ansi.h"
+#include "src/hash.h"
 #include "src/menu.h"
 #include "src/pokedex.h"
-#include "src/colores.h"
 #include "src/logica.h"
 #include "src/verificaciones.h"
 
@@ -38,13 +38,21 @@ bool agregar_opciones_al_menu(menu_t *menu)
 	return true;
 }
 
-void destruir_datos(pokedex_t *pokedex, colores_t *colores)
+void destruir_pokemones(pokemon_t* pokemon)
+{
+	free(pokemon->nombre);
+	free(pokemon->color);
+	free(pokemon->movimientos);
+	free(pokemon);
+}
+
+void destruir_datos(pokedex_t *pokedex, hash_t *colores)
 {
 	if (pokedex) {
-		pokedex_destruir(pokedex);
+		pokedex_destruir_todo(pokedex, destruir_pokemones);
 	}
 	if (colores) {
-		colores_destruir(colores);
+		hash_destruir(colores);
 	}
 }
 

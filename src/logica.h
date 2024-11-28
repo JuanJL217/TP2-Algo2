@@ -2,6 +2,8 @@
 #define LOGICA_H
 
 #include <stdlib.h>
+#include "hash.h"
+#include "pokedex.h"
 
 #define MAX_CARACTERES 20
 
@@ -9,7 +11,7 @@ typedef struct booleanos {
 	bool menu_seguir;
 	bool opciones_seguir;
 	pokedex_t *pokedex;
-	colores_t *colores;
+	hash_t *colores;
 	size_t *semilla;
 	size_t cantidad_objetivos;
 	size_t cantidad_filas;

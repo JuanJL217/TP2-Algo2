@@ -3,15 +3,16 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include "lista.h"
 
 /**
- *TDA Menu.
+ * TDA Menu.
  */
-typedef struct menu menu_t;
+typedef Lista menu_t;
 
 /**
- *Estructura para las opciones.
- *El usuario debe usarlo para la función mostrar.
+ * Estructura para las opciones.
+ * El usuario debe usarlo para la función mostrar.
  */
 typedef struct opcion_menu {
 	char indice;
@@ -20,37 +21,36 @@ typedef struct opcion_menu {
 } opcion_menu_t;
 
 /**
- *Se crea el menú donde almacenaremos nuestras opciones.
+ * Se crea el menú donde almacenaremos nuestras opciones.
  */
 menu_t *menu_crear();
 
 /**
- *Se ingresa una opcion y una acción relacionada.
- *Si hubo error, retorna false.
+ * Se ingresa una opcion y una acción relacionada.
+ * Si hubo error, retorna false.
  */
 bool menu_ingresar_opcion(menu_t *menu, char indice, char *texto,
 			  bool (*accion)(void *));
 
 /**
- *Se itera las opciones en orden de insersion
- *Se puede editar cómo mostrar cada línea.
+ * Se itera las opciones en orden de insersion
  */
 size_t menu_iterar_opciones(menu_t *menu,
-			    bool (*funcion_mostrar)(void *, void *), void *ctx);
+			    bool (*funcion)(void *, void *), void *ctx);
 
 /**
- *Retorna la cantidad de opciones en el menu.
+ * Retorna la cantidad de opciones en el menu.
  */
 size_t menu_cantidad(menu_t *menu);
 
 /**
- *Se busca la opcion y la ejecuta.
- *Si no se encuentra, retorna false.
+ * Se busca la opcion y la ejecuta.
+ * Si no se encuentra, retorna false.
  */
 bool menu_ejecutar_opcion(menu_t *menu, char indice, void *ctx);
 
 /**
- *Libera toda la memoria.
+ * Destruye el menu
  */
 void menu_destruir(menu_t *menu);
 

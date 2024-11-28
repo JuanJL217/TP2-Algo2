@@ -1,5 +1,4 @@
 #include "menu.h"
-#include "lista.h"
 #include "csv.h"
 #include <string.h>
 #include <stdio.h>
@@ -22,9 +21,14 @@ opcion_menu_t *crear_opcion(const char indice, const char *texto,
 	return opcion;
 }
 
+int buscar_indice(void *a, void *b)
+{
+	return (*(opcion_menu_t *)a).indice - (*(char *)b);
+}
+
 menu_t *menu_crear()
 {
-	return (menu_t *)lista_crear();
+	return lista_crear();
 }
 
 bool menu_ingresar_opcion(menu_t *menu, char indice, char *texto,
@@ -35,29 +39,25 @@ bool menu_ingresar_opcion(menu_t *menu, char indice, char *texto,
 	opcion_menu_t *opcion = crear_opcion(indice, texto, accion);
 	if (!opcion)
 		return false;
-	return lista_agregar_al_final((Lista *)menu, (void *)opcion);
+	return lista_agregar_al_final(menu, (void *)opcion);
 }
 
 size_t menu_cantidad(menu_t *menu)
-{
-	return lista_cantidad_elementos((Lista *)menu);
+{	
+	return lista_cantidad_elementos(menu);
 }
 
 size_t menu_iterar_opciones(menu_t *menu,
 			    bool (*funcion_mostrar)(void *, void *), void *ctx)
 {
-	return lista_iterar_elementos((Lista *)menu, funcion_mostrar, ctx);
-}
-
-int buscar_opcion(void *a, void *b)
-{
-	return (*(opcion_menu_t *)a).indice - (*(char *)b);
+	return lista_iterar_elementos(menu, funcion_mostrar, ctx);
 }
 
 bool menu_ejecutar_opcion(menu_t *menu, char indice, void *ctx)
-{
-	opcion_menu_t *opcion = lista_buscar_elemento(
-		(Lista *)menu, (void *)&indice, buscar_opcion);
+{	
+	if (!menu)
+		return false;
+	opcion_menu_t *opcion = lista_buscar_elemento(menu, (void *)&indice, buscar_indice);
 	if (!opcion || !opcion->accion)
 		return false;
 	return opcion->accion(ctx);
@@ -72,5 +72,5 @@ void destruir_opciones(void *_opcion_actual)
 
 void menu_destruir(menu_t *menu)
 {
-	lista_destruir_todo((Lista *)menu, destruir_opciones);
+	lista_destruir_todo(menu, destruir_opciones);
 }
