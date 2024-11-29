@@ -65,7 +65,7 @@ El informe debe incluir lo siguiente:
   Para este TP implementé 4 TDA:
 
 ## TDA Pokedex
-El TDA Pokedex es un almacen de pokemons, los cuales puedo insertar y obtener pokemones.
+El TDA Pokedex es un almacen de pokemones, los cuales puedo insertar y obtener pokemones.
 Lo utilizó para la opción de `Mostrar pokedex`, el cual debe mostrar en orden alfabetico cada pokemon, y para la selección de los pokemones que se hará al azar.
 
 - `pokedex_crear`: Crea un ABB, siendo el nombre de los pokemones la función de comparación.  
@@ -75,12 +75,14 @@ Lo utilizó para la opción de `Mostrar pokedex`, el cual debe mostrar en orden 
 - `pokedex_obtener_pokemon`: Esta función utiliza también el recorrido inorden el cual se teniende cuando quiero la posición de un pokemon en la pokedex, ya que, la idea de esta Pokedex es que estén los pokemones en orden alfabetico.
 
 ## TDA Menu
-Para esté TDA primero pensé en que sea una estructura de Cola, porque todas las opciones que insertemos, tendremos que mostrarlo por orden de insersión, o sea, el primero que insertamos, es el primero que va a salir, pero luego pensé en que mejor es iterar las opciones para poder  mostrarlas (en vez de estar desencolando y encolando recursivamente para mostrar las opciones), con lo que llegué a la desición de que mejor es una estructura de Lista. Mencionar que no utilicé un Hash, porque al mostrar las opciones, iban a aparecer en desorde, y tampoco un ABB, porque depende cómo insertemos e iteremos, cómo se mostraría, y queremos que sea intuitivo que lo que inserto, así es el orden que quiero ver.
+El TDA Menu es una Lista de opciones que el usuario ingresará con una estructura interna de `indice`, `texto` y una `funcion` a ejecutar para cada nodo. Para este TDA decidí que no habrá una función de busqueda, obtención ni eliminación, ya que el usuario pone los datos desde el comienzo y para fines del tp, es más practico tener funciones que usaré.  
+Mencionar que este TDA tiene la ventaja de tener información entre funciones de cada opción como `banderas`. La idea es la siguiente: Si sé que en la opciones de `Mostrar pokemones` y `Jugar` con o sin semilla, necesito la Pokedex, entonces, si creo la Pokedex cuando quiero mostrar los Pokemones, esa información me la guardo para cuando quiera jugar, entonces no tengo que crear una nueva Pokedex con los mismos pokemones, si no que simplemente si ya lo creé en otra función, reutilizarlo.
 
-- El TDA Menu es una Lista de opciones con una estructura interna que llevará un `indice`, `texto` y una `funcion` a ejecutar para cada nodo.
-- Para este TDA decidí que no habrá una función de busqueda, obtención ni eliminación, ya que el usuario pone los datos desde el comienzo y para fines del tp, es más practico tener funciones que usaré.
-- Con el TDA Menu puedo llevar el control de algunas `banderas` por fuera de las opciones a ejecutar, por ejemplo: Si decidí `Mostrar pokedex`, lo que uno haría es llamar a la ejecución de dicha función y una vez que se termina de procesar dicha opción, se libere toda la memoria que llamé en esa ejecución, pero, si tengo en cuenta una `bandera que se encienda`, no tendría que para otra función
-- El TDA Menu consiste en agregarle 
+- `menu_crear`: Crea una Lista para guardar cada opcion, la estructura de la opcion se crea internamente.  
+- `menu_ingresar_opcion`: Se agrega una opcion, la cual es una estructura que se crea internamente, a la Lista de opciones.
+- `menu_iterar_opciones`: Con el mismo argumento que al iterar la Pokedex, iteramos cada opción para darle el diseño que querramos para poder mostrarlo por pantalla.
+- `menu_cantidad`: Muestra la cantidad de opciones que tiene el Menu.
+- `menu_ejecutar_opcion`: Dado un indice, se ejecuta la opción. Se puede tener varias opciones con el mismo indice, pero solo el primero que se agrega es el que se podrá ejecutar.
 
 ## TDA Tablero
 
