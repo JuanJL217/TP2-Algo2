@@ -745,7 +745,7 @@ int main()
 	prueba_colocar_elemento_en_tablero();
 	prueba_color_mas_elementos_en_el_tablerp();
 
-	pa2m_nuevo_grupo("PRUEBA MOVER ELEMENTOS");
+	pa2m_nuevo_grupo("PRUEBA VACIAR POSICION");
 	prueba_mover_elemento_tablero();
 
 	pa2m_nuevo_grupo("PRUEBA TABLERO ES NULL");

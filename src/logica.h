@@ -44,6 +44,9 @@ bool opciones_jugar(void* banderas);
  */
 bool salir_del_menu(void *banderas);
 
+/**
+ * 
+ */
 bool restablecer_valores(void *banderas);
 
 #endif // LOGICA_H

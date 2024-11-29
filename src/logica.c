@@ -6,7 +6,6 @@
 #include <time.h>
 #include "verificaciones.h"
 #include "lista.h"
-#include "pokedex.h"
 #include "tablero.h"
 #include "logica.h"
 #include "movimientos.h"
@@ -16,10 +15,6 @@
 #include "menu.h"
 
 const char CARACTER_USUARIO = '&';
-const size_t CANTIDAD_FILAS = 15;
-const size_t CANTIDAD_COLUMAS = 35;
-const size_t CANTIDAD_POKEMONES_EN_TABLERO = 7;
-const size_t TIEMPO_MAXIMO = 60;
 
 typedef struct jugador_en_juego {
 	char caracter;
