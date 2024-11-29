@@ -14,7 +14,7 @@ const size_t CANTIDAD_OPCIONES_MENU_PRINCIPAL = 6;
 const size_t CANTIDAD_OBJETIVOS_INICIAL = 7;
 const size_t FILAS_INICIAL = 15;
 const size_t COLUMNAS_INICIAL = 32;
-const size_t TIEMPO INICIAL = 60;
+const size_t TIEMPO_INICIAL = 60;
 
 bool imprimir_opciones(void *_opcion, void *nada)
 {
@@ -80,7 +80,7 @@ int main()
 				   .cantidad_objetivos = CANTIDAD_OBJETIVOS_INICIAL,
 				   .cantidad_filas = FILAS_INICIAL,
 				   .cantidad_columas = COLUMNAS_INICIAL,
-				   .tiempo_maximo = INICIAL};
+				   .tiempo_maximo = TIEMPO_INICIAL};
 	char texto[MAX_CARACTERES];
 	while (banderas.menu_seguir) {
 		menu_iterar_opciones(menu, imprimir_opciones, NULL);

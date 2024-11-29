@@ -84,7 +84,6 @@ hash_t* colores_cargados()
     if (!colores) {
         return NULL;
     }
-
 	hash_insertar(colores, "ROJO", ANSI_COLOR_RED, NULL);
 	hash_insertar(colores, "AZUL", ANSI_COLOR_BLUE, NULL);
 	hash_insertar(colores, "VERDE", ANSI_COLOR_GREEN, NULL);

@@ -37,10 +37,10 @@ typedef struct pokemon_en_juego {
 	size_t x;
 } pokemon_seleccionado;
 
-typedef struct informacion {
+typedef struct informacion_para_el_juego {
 	usuario *personaje;
 	Lista *pokemones_seleccionados;
-	Lista *pokemones_eliminados;
+	Lista *posiciones_pokemones_capturados;
 	tablero_t *tablero;
 	movimientos_t *movimientos;
 	booleanos *banderas;
@@ -49,13 +49,20 @@ typedef struct informacion {
 	size_t maximo_grupo_formado;
 	size_t contador_grupos;
 	size_t tiempo;
-} informacion_t;
+} informacion_juego;
 
-typedef struct juego {
+typedef struct logica_dentro_del_loop {
 	char *direccion_usuario;
 	size_t posicion_pokemon_eliminado;
-	informacion_t *informacion;
-} juego_t;
+	informacion_juego *informacion;
+} informacion_loop;
+
+void destruir_pokemones_seleccionados(void *_pokemon)
+{	
+	pokemon_seleccionado* pokemon = (pokemon_seleccionado *)_pokemon;
+	free(pokemon->nombre);
+	free(pokemon);
+}
 
 void dibujar_tablero(tablero_t *tablero)
 {	
@@ -99,14 +106,22 @@ bool imprimir_pokemones(pokemon_t *pokemon, void *_colores)
 	return true;
 }
 
+bool cargar_pokedex_y_colores(booleanos* banderas)
+{
+	if (!banderas->pokedex)
+		banderas->pokedex = pokedex_cargada();
+	if (!banderas->colores)
+		banderas->colores = colores_cargados();
+	if (!banderas->pokedex || !banderas->colores)
+		return false;
+	return true;
+}
+
 bool mostrar_pokemones(void *_banderas)
 {
 	booleanos *banderas = (booleanos *)_banderas;
-	banderas->pokedex = pokedex_cargada();
-	banderas->colores = colores_cargados();
-	if (!banderas->pokedex || !banderas->colores) {
+	if (!cargar_pokedex_y_colores(banderas))
 		return false;
-	}
 	borrar_pantalla();
 	pokedex_iterar(banderas->pokedex, imprimir_pokemones,
 		       (void *)banderas->colores);
@@ -129,7 +144,7 @@ void pokemon_movimiento(pokemon_seleccionado* pokemon , tablero_t* tablero, movi
 bool movimientos_pokemones(void *_pokemon, void *_dato)
 {
 	pokemon_seleccionado *pokemon = (pokemon_seleccionado *)_pokemon;
-	juego_t *juego = (juego_t *)_dato;
+	informacion_loop *juego = (informacion_loop *)_dato;
 	size_t y_antes = pokemon->y;
 	size_t x_antes = pokemon->x;
 	if (juego->direccion_usuario) {
@@ -146,7 +161,7 @@ bool movimientos_pokemones(void *_pokemon, void *_dato)
 			return false;
 		}
 		*posicion_pokemon_capturado = juego->posicion_pokemon_eliminado;
-		lista_agregar_al_final(juego->informacion->pokemones_eliminados,
+		lista_agregar_al_final(juego->informacion->posiciones_pokemones_capturados,
 				       (void *)posicion_pokemon_capturado);
 	} else if (juego->informacion->personaje->x == x_antes &&
 		   juego->informacion->personaje->y == y_antes) {
@@ -179,7 +194,12 @@ bool seleccion_de_pokemon(pokedex_t *pokedex, hash_t *colores,
 		printf("No se pudo asignar memoria para el nuevo pokemon seleccionado");
 		return false;
 	}
-	pokemon_objetivo->nombre = pokemon->nombre;
+	pokemon_objetivo->nombre = calloc(1, strlen(pokemon->nombre)+1);
+	if (!pokemon_objetivo->nombre) {
+		free(pokemon_objetivo);
+		return false;
+	}
+	strcpy(pokemon_objetivo->nombre, pokemon->nombre);
 	pokemon_objetivo->caracter = pokemon->nombre[0];
 	pokemon_objetivo->color = color_obtenido;
 	pokemon_objetivo->movimientos = pokemon->movimientos;
@@ -276,13 +296,13 @@ bool procesar_pokemon_capturado(Lista *posiciones, Lista *seleccionados,
 				return false;
 			}
 		} else {
-			free(pokemon);
+			destruir_pokemones_seleccionados((void*)pokemon);
 		}
 	}
 	return true;
 }
 
-void mostrar_informacion_por_pantalla(size_t *tiempo, size_t tiempo_maximo, Pila *capturados,
+void mostrar_informacion_por_pantalla(size_t *tiempo, size_t* semilla, size_t tiempo_maximo, Pila *capturados,
 				      usuario *usuario, tablero_t *tablero)
 {
 	(*tiempo)++;
@@ -294,6 +314,7 @@ void mostrar_informacion_por_pantalla(size_t *tiempo, size_t tiempo_maximo, Pila
 	printf("👣%s%li%s 💲%s%li%s %s(x%li)%s\n", ANSI_COLOR_BLUE, usuario->cantidad_pasos, ANSI_COLOR_RESET, 
 	ANSI_COLOR_GREEN, usuario->puntaje, ANSI_COLOR_RESET, ANSI_COLOR_YELLOW, usuario->multiplicador, ANSI_COLOR_RESET);
 	dibujar_tablero(tablero);
+	printf("🌱 %s%li%s\n", ANSI_COLOR_CYAN, *semilla, ANSI_COLOR_RESET);
 	if (!pila_esta_vacía(capturados)) {
 		pokemon_seleccionado *pokemon =
 			(pokemon_seleccionado *)pila_tope(capturados);
@@ -319,8 +340,8 @@ void usuario_movimiento(tablero_t* tablero, usuario* usuario, char* tipo_movimie
 int logica_juego(int entrada, void *_dato)
 {
 	borrar_pantalla();
-	informacion_t *dato = (informacion_t *)_dato;
-	juego_t juego = { .direccion_usuario = NULL,
+	informacion_juego *dato = (informacion_juego *)_dato;
+	informacion_loop juego = { .direccion_usuario = NULL,
 			  .informacion = dato,
 			  .posicion_pokemon_eliminado = 0 };
 	size_t x_antes = juego.informacion->personaje->x;
@@ -343,7 +364,7 @@ int logica_juego(int entrada, void *_dato)
 	lista_iterar_elementos(dato->pokemones_seleccionados,
 			       movimientos_pokemones, (void *)&juego);
 	size_t cantidad_eliminados =
-		lista_cantidad_elementos(dato->pokemones_eliminados);
+		lista_cantidad_elementos(dato->posiciones_pokemones_capturados);
 	for (size_t i = 0; i < cantidad_eliminados; i++) {
 		if (!seleccion_de_pokemon(
 			    dato->banderas->pokedex, dato->banderas->colores,
@@ -353,29 +374,19 @@ int logica_juego(int entrada, void *_dato)
 		}
 	}
 	if (!procesar_pokemon_capturado(
-		    dato->pokemones_eliminados, dato->pokemones_seleccionados,
+		    dato->posiciones_pokemones_capturados, dato->pokemones_seleccionados,
 		    dato->personaje, dato->grupos_formados,
 		    dato->pokemones_capturados, &dato->contador_grupos,
 		    &dato->maximo_grupo_formado)) {
 		return false;
 	}
-	mostrar_informacion_por_pantalla(&dato->tiempo, dato->banderas->tiempo_maximo, 
+	mostrar_informacion_por_pantalla(&dato->tiempo, dato->banderas->semilla, dato->banderas->tiempo_maximo, 
 					 dato->pokemones_capturados,
 					 dato->personaje, dato->tablero);
 	if ((dato->tiempo/5) == dato->banderas->tiempo_maximo) {
 		entrada = 'q';
 	}
 	return entrada == 'q' || entrada == 'Q';
-}
-
-void destruir_pokemones_seleccionados(void *_pokemon)
-{
-	free((pokemon_seleccionado *)_pokemon);
-}
-
-void destruir_pokemones_capturados(void *_pokemon)
-{
-	free((pokemon_seleccionado *)_pokemon);
 }
 
 bool mostrar_grupos_maximo_formado(void *_grupo_formado, void *cantidad_maxima)
@@ -388,7 +399,7 @@ bool mostrar_grupos_maximo_formado(void *_grupo_formado, void *cantidad_maxima)
 					grupo_formado);
 			printf("%s%c%s", pokemon->color, pokemon->caracter,
 			       ANSI_COLOR_RESET);
-			free(pokemon);
+			destruir_pokemones_seleccionados((void*)pokemon);
 		}
 		printf("\n");
 	}
@@ -397,7 +408,7 @@ bool mostrar_grupos_maximo_formado(void *_grupo_formado, void *cantidad_maxima)
 
 void destruir_colas(void *_cola)
 {
-	cola_destruir_todo((Cola *)_cola, destruir_pokemones_capturados);
+	cola_destruir_todo((Cola *)_cola, destruir_pokemones_seleccionados);
 }
 
 void destruir_almacenacimientos_pokemon(Lista *grupos_formados,
@@ -412,7 +423,7 @@ void destruir_almacenacimientos_pokemon(Lista *grupos_formados,
 	pila_destruir(pokemones_capturados);
 }
 
-informacion_t *inicializar_informacion(tablero_t *tablero, booleanos *banderas,
+informacion_juego *inicializar_informacion(tablero_t *tablero, booleanos *banderas,
 				       usuario *usuario,
 				       movimientos_t *movimientos)
 {
@@ -432,7 +443,7 @@ informacion_t *inicializar_informacion(tablero_t *tablero, booleanos *banderas,
 		seleccion_de_pokemon(banderas->pokedex, banderas->colores,
 				     objetivos_pokemones, tablero);
 	}
-	informacion_t *informacion = calloc(1, sizeof(informacion_t));
+	informacion_juego *informacion = calloc(1, sizeof(informacion_juego));
 	if (!informacion) {
 		printf("No se pudo inicializar la información para el juego");
 		destruir_almacenacimientos_pokemon(objetivos_pokemones,
@@ -445,7 +456,7 @@ informacion_t *inicializar_informacion(tablero_t *tablero, booleanos *banderas,
 	informacion->tablero = tablero;
 	informacion->movimientos = movimientos;
 	informacion->pokemones_seleccionados = objetivos_pokemones;
-	informacion->pokemones_eliminados = pokemones_eliminados;
+	informacion->posiciones_pokemones_capturados = pokemones_eliminados;
 	informacion->pokemones_capturados = pokemones_capturados;
 	informacion->grupos_formados = grupos_formados;
 	informacion->banderas = banderas;
@@ -459,18 +470,18 @@ bool jugar_partida(void *_banderas)
 {
 	borrar_pantalla();
 	booleanos *banderas = (booleanos *)_banderas;
-	banderas->pokedex = pokedex_cargada();
-	banderas->colores = colores_cargados();
-	movimientos_t *movimientos = movimientos_cargados();
-	if (!banderas->pokedex || !banderas->colores || !movimientos) {
+	if (!cargar_pokedex_y_colores(banderas))
 		return false;
-	}
+	movimientos_t *movimientos = movimientos_cargados();
+	if (!movimientos)
+		return false;
 	tablero_t *tablero = tablero_crear(banderas->cantidad_filas, banderas->cantidad_columas);
 	if (!tablero)
 		return false;
-	esconder_cursor();
 	if (!banderas->semilla) {
-		srand((unsigned int)time(NULL));
+		size_t semilla = (size_t)time(NULL);
+		srand((unsigned int)semilla);
+		banderas->semilla = &semilla;
 	} else {
 		srand((unsigned int)*banderas->semilla);
 	}
@@ -482,12 +493,14 @@ bool jugar_partida(void *_banderas)
 				.multiplicador_maximo = 1,
 			    .y = 0,
 			    .x = 0 };
-	informacion_t *juego = inicializar_informacion(tablero, banderas,
+	informacion_juego *juego = inicializar_informacion(tablero, banderas,
 						       &jugador, movimientos);
 	if (!juego)
 		return false;
 	tablero_colocar_elemento(tablero, 0, 0, jugador.caracter, ANSI_COLOR_WHITE);
+	esconder_cursor();
 	game_loop(logica_juego, (void *)juego);
+	mostrar_cursor();
 	printf("Maximo(s) grupo(s) formado(s):\n");
 	if (lista_iterar_elementos(juego->grupos_formados,
 			       mostrar_grupos_maximo_formado,
@@ -496,10 +509,10 @@ bool jugar_partida(void *_banderas)
 	}
 	printf("Multiplicador maximo: %li\n", juego->personaje->multiplicador_maximo);
 	printf("Tu puntaje final fue de: %li\n", juego->personaje->puntaje);
-	mostrar_cursor();
+
 	destruir_almacenacimientos_pokemon(juego->grupos_formados,
 					   juego->pokemones_seleccionados,
-					   juego->pokemones_eliminados,
+					   juego->posiciones_pokemones_capturados,
 					   juego->pokemones_capturados);
 	tablero_destruir(tablero);
 	movimientos_destruir(movimientos);
