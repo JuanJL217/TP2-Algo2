@@ -87,7 +87,7 @@ booleanos banderas = { .menu_seguir = true,
 ## Logica del Juego  
 
 ### Selección de pokemones
-Para poder obtener los pokemones que estarán en el tablero, vamos usar la función `pokedex_obtener_pokemon` y la posición que obtengemos será aleatoria, por eso, vamos a usar `rand` que va desde el 0 hasta la cantidad de pokemones que hay en la Pokedex. Los pokemones que se obtengan, se les copiará la información a un nuevo tipo de dato el cual es `pokemon_seleccionado`, el cual obtiene referencia a `x` e `y`, que es donde se encontrará en el tablero.
+Para poder obtener los pokemones que estarán en el tablero, vamos usar la función `pokedex_obtener_pokemon` y la posición que obtengemos será aleatoria, por eso, vamos a usar `rand` que va desde el 0 hasta la cantidad de pokemones que hay en la Pokedex. Los pokemones que se obtengan, se les copiará la información a un nuevo tipo de dato el cual es `pokemon_seleccionado`, el cual obtiene referencia a `x` e `y`, que es donde se encontrará en el tablero, y ese pokemones que se seleccionó, se lo guardará en una `Lista`, insertando al final cada nuevo pokemon seleccionado.
 
 ### Movimientos
 La lógica para que el pokemon siga su patrón de movimiento, es iterar el conjuto de caracteres, ejemplo: Si un pokemon tiene los movimientos "JRNE.  
@@ -99,9 +99,13 @@ Entonces, a medida que vamos iteración carda caracter, vamos a transformarlo en
 Con esto garantizamos que cada pokemon realice su patrón de movimiento.
 
 ### Capturar pokemones
-Una vez que el 
+Una vez que el usuario y los pokemones hayan hecho su respectivo movimiento, se iterará la Lista de los pokemones seleccionados para ver si hay pokemones en la misma posición del usuario, de ser así, significa que el usuario capturó a dicho pokemon. Al saber que pueden haber más de 1 pokemon por posición, siempre tomaremos en cuenta último pokemon que se iteró con la misma posicion del usuario, y ese será el último pokemon que capturamos. La lógica para que esto suceda, es la siguiente: Una vez que iteramos, y encontramos al pokemon en la misma posición del usuario, se guardará un contador de posiciones, y dicha posición, se guardará en una `Lista` que lleve el listado de las posiciones de los pokemones que el usuario capturó. Luego se iteterá esta última Lista de posiciones para poder dar la lógica de captura y/o liberación.
+
+### Ultimo pokemon capturado
+Una vez que capturamos a un pokemon, este se guardará en una `Pila`, con esto, llevaremos la cantidad de pokemones capturados sabiedo la cantidad de elementos en la Pila, y podemos obtener el último pokemon que capturamos con la función de `ver_tope`. Si el siguiente pokemon que atrapemos, tiene el mismo caracter que el último pokemon que capturamos o su mismo color, el multiplicador se elevará.
 
 ### Puntuaciones
+Ya me que mencionamos la lógica del último pokemon capturado y el multiplicador, ahora toca mencionar la lógica sobre las puntuaciones del jugador. Si el siguiente pokemon que se capture, tiene las mismas condiciones mencionadas anteriormente, dicho puntaje del pokemon que haya sido atrapado en ese momento, se muliplicada por el multiplicador del usuario actual y se le sumará al puntaje del jugador, luego se le subirá en 1 el multiplicador. Caso contrario que cpaturé un pokemon que no cumpla una de las 2 condiciones para que siga subiendo el multiplicador, primero se multiplica el puntaje del nuevo pokemon capturado por el multiplicador actual y se le suma el resultado al puntaje del jugador, luego se procede a mandar el muliplicador a su estado base, que es un `x1`.
 
 ### El mayor grupo formado
 
