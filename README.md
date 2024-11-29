@@ -4,55 +4,14 @@
 
 # TP 2
 
-## Repositorio de (Nombre Apellido) - (Padrón) - (Mail)
-
-- Para compilar:
-
-```bash
-línea de compilación
-```
+## Repositorio de (Juan Ernesto Juarez Lezama) - (110418) - (jjuarez@fi.uba.ar)
 
 - Para ejecutar:
 
 ```bash
-línea de ejecución
+make
 ```
-
-- Para ejecutar con valgrind:
-```bash
-línea con valgrind
-```
----
-##  Funcionamiento
-
-Explicación de cómo funcionan las estructuras desarrolladas en el TP y el funcionamiento general del mismo.
-
-Aclarar en esta parte todas las decisiones que se tomaron al realizar el TP, cosas que no se aclaren en el enunciado, fragmentos de código que necesiten explicación extra, etc.
-
-Incluir **EN TODOS LOS TPS** los diagramas relevantes al problema (mayormente diagramas de memoria para explicar las estructuras, pero se pueden utilizar otros diagramas si es necesario).
-
-### Por ejemplo:
-
-El programa funciona abriendo el archivo pasado como parámetro y leyendolo línea por línea. Por cada línea crea un registro e intenta agregarlo al vector. La función de lectura intenta leer todo el archivo o hasta encontrar el primer error. Devuelve un vector con todos los registros creados.
-
-<div align="center">
-<img width="70%" src="img/diagrama1.svg">
-</div>
-
-En el archivo `sarasa.c` la función `funcion1` utiliza `realloc` para agrandar la zona de memoria utilizada para conquistar el mundo. El resultado de `realloc` lo guardo en una variable auxiliar para no perder el puntero original en caso de error:
-
-```c
-int *vector = realloc(vector_original, (n+1)*sizeof(int));
-
-if(vector == NULL)
-    return -1;
-vector_original = vector;
-```
-
-
-<div align="center">
-<img width="70%" src="img/diagrama2.svg">
-</div>
+Se ejecutará tanto las pruebas como el tp2.c con valgrind.
 
 ---
 
@@ -100,3 +59,47 @@ Este TDA lo utilizo para realizar los movimientos de cada pokemones y también l
 - `movimientos_crear`: Crea un hash para gaurdar el nombre del movimiento (clave) y una función asociada (valor).
 - `movimientos_agregar`: Se agrega la clave y la función que tiene la forma que se le pide, 1 char* 2 size_t* y 2 size_t, esto es así porque, si bien los movimientos independiente tienen una sola dirección, cuando un movimiento depende de otro, necesito saber qué tipo de movimiento se hizo para así yo poder realizar, y como no conozcó qué voy a modificar, puede ser arriba, abajo, derecha o izquierda.  
 - `movimiento_realizar`: Ejecuta la función de movimiento a realizar.
+
+---
+##  Funcionamiento
+Mientras voy explicando como se desarrolla la lógica del juego, primero mencionar el uso del TDA Menu, que es donde inserto las 4 opciones fundamentales para el TP, el cual decidí agregarle 2 funciones extras, que son: `Otras opciones` y `Reestablecer valores predeterminados`.  
+La opción de `Otras opciones` me abre otro menu, el cual tengo las opciones de cambiar cosas del juego, como el `tiempo maximo`, la `cantidad de pokemones` en el juego y las `dimensiones del tablero`. Y la opción de `Reestablecer valores predeterminados` en el menu principal, es para volver a los ajustes predeterminados del juego.
+
+Esto de las ediciones, así como cuando ingreso a la opción `Mostrar pokedex`, cargo los datos de los pokemons para poder mostrarlos, esta información se guarda en la variable `banderas`, con lo cual, no tengo destruir la pokedex, porque si quiero jugar, voy a tener que volver a cargar la pokedex, entonces mejor tener la referencia de la pokedex creada en la otra función y se libera cuando el programa cierre.
+
+```c
+booleanos banderas = { .menu_seguir = true,
+            .opciones_seguir = false,
+            .pokedex = NULL,
+            .colores = NULL,
+            .semilla = NULL,
+            .cantidad_objetivos = CANTIDAD_OBJETIVOS_INICIAL,
+            .cantidad_filas = FILAS_INICIAL,
+            .cantidad_columas = COLUMNAS_INICIAL,
+            .tiempo_maximo = INICIAL};
+```
+
+### Por ejemplo:
+
+El programa funciona abriendo el archivo pasado como parámetro y leyendolo línea por línea. Por cada línea crea un registro e intenta agregarlo al vector. La función de lectura intenta leer todo el archivo o hasta encontrar el primer error. Devuelve un vector con todos los registros creados.
+
+<div align="center">
+<img width="70%" src="img/diagrama1.svg">
+</div>
+
+En el archivo `sarasa.c` la función `funcion1` utiliza `realloc` para agrandar la zona de memoria utilizada para conquistar el mundo. El resultado de `realloc` lo guardo en una variable auxiliar para no perder el puntero original en caso de error:
+
+```c
+int *vector = realloc(vector_original, (n+1)*sizeof(int));
+
+if(vector == NULL)
+    return -1;
+vector_original = vector;
+```
+
+
+<div align="center">
+<img width="70%" src="img/diagrama2.svg">
+</div>
+
+---

@@ -587,11 +587,6 @@ bool modificar_dimensiones_tablero(void* _banderas)
 	return true;
 }
 
-bool cambiar_caracter(void* _banderas)
-{
-	return true;
-}
-
 bool volver_al_menu(void* _banderas)
 {	
 	booleanos* banderas = (booleanos*)_banderas;
@@ -604,10 +599,9 @@ bool agregar_opciones_extras(menu_t* opciones_extras)
 	menu_ingresar_opcion(opciones_extras, 'M', "Modificar cantidad de Pokemones en Juego", modificar_cantidad_pokemones);
 	menu_ingresar_opcion(opciones_extras, 'T', "Modifcar Tiempo", modificar_tiempo);
 	menu_ingresar_opcion(opciones_extras, 'F', "Modificar cantidad Filas y Columnas", modificar_dimensiones_tablero);
-	menu_ingresar_opcion(opciones_extras, 'C', "Elegir caracter preferido", cambiar_caracter);
 	menu_ingresar_opcion(opciones_extras, 'V', "Volver al menu", volver_al_menu);
 
-	if (menu_cantidad(opciones_extras) != 5) {
+	if (menu_cantidad(opciones_extras) != 4) {
 		menu_destruir(opciones_extras);
 		return false;
 	}

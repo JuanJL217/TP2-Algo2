@@ -10,7 +10,11 @@
 #include "src/logica.h"
 #include "src/verificaciones.h"
 
-const size_t CANTIDAD_OPCIONES = 6;
+const size_t CANTIDAD_OPCIONES_MENU_PRINCIPAL = 6;
+const size_t CANTIDAD_OBJETIVOS_INICIAL = 7;
+const size_t FILAS_INICIAL = 15;
+const size_t COLUMNAS_INICIAL = 32;
+const size_t TIEMPO INICIAL = 60;
 
 bool imprimir_opciones(void *_opcion, void *nada)
 {
@@ -31,7 +35,7 @@ bool agregar_opciones_al_menu(menu_t *menu)
 	menu_ingresar_opcion(menu, 'R', "Restablecer valores predeterminados", restablecer_valores);
 	menu_ingresar_opcion(menu, 'Q', "Salir", salir_del_menu);
 
-	if (menu_cantidad(menu) != CANTIDAD_OPCIONES) {
+	if (menu_cantidad(menu) != CANTIDAD_OPCIONES_MENU_PRINCIPAL) {
 		menu_destruir(menu);
 		return false;
 	}
@@ -73,10 +77,10 @@ int main()
 			       .pokedex = NULL,
 			       .colores = NULL,
 				   .semilla = NULL,
-				   .cantidad_objetivos = 7,
-				   .cantidad_filas = 15,
-				   .cantidad_columas = 32,
-				   .tiempo_maximo = 60};
+				   .cantidad_objetivos = CANTIDAD_OBJETIVOS_INICIAL,
+				   .cantidad_filas = FILAS_INICIAL,
+				   .cantidad_columas = COLUMNAS_INICIAL,
+				   .tiempo_maximo = INICIAL};
 	char texto[MAX_CARACTERES];
 	while (banderas.menu_seguir) {
 		menu_iterar_opciones(menu, imprimir_opciones, NULL);
