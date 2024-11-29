@@ -62,10 +62,12 @@ Este TDA lo utilizo para realizar los movimientos de cada pokemones y también l
 
 ---
 ##  Funcionamiento
+
+### Menu principal  
 Mientras voy explicando como se desarrolla la lógica del juego, primero mencionar el uso del TDA Menu, que es donde inserto las 4 opciones fundamentales para el TP, el cual decidí agregarle 2 funciones extras, que son: `Otras opciones` y `Reestablecer valores predeterminados`.  
 La opción de `Otras opciones` me abre otro menu, el cual tengo las opciones de cambiar cosas del juego, como el `tiempo maximo`, la `cantidad de pokemones` en el juego y las `dimensiones del tablero`. Y la opción de `Reestablecer valores predeterminados` en el menu principal, es para volver a los ajustes predeterminados del juego.
 
-Esto de las ediciones, así como cuando ingreso a la opción `Mostrar pokedex`, cargo los datos de los pokemons para poder mostrarlos, esta información se guarda en la variable `banderas`, con lo cual, no tengo destruir la pokedex, porque si quiero jugar, voy a tener que volver a cargar la pokedex, entonces mejor tener la referencia de la pokedex creada en la otra función y se libera cuando el programa cierre.
+Esto de las ediciones, así como cuando ingreso a la opción `Mostrar pokedex`, cargo los datos de los pokemons para poder mostrarlos, esta información se guarda en la variable `banderas`, con lo cual, no tengo que destruir la pokedex, porque si quiero jugar, voy a tener que volver a cargar la pokedex, entonces mejor tener la referencia de la pokedex creada en la otra función y se libera cuando el programa cierre.
 
 ```c
 booleanos banderas = { .menu_seguir = true,
@@ -79,15 +81,27 @@ booleanos banderas = { .menu_seguir = true,
             .tiempo_maximo = INICIAL};
 ```
 
-### Por ejemplo:
+### Logica del Juego  
+Empezando por el uso del `Hash`, para almacenar los colores, el cual, escribiendo la clave del color ("Rojo"), obtengo su código ANSI.  
 
-El programa funciona abriendo el archivo pasado como parámetro y leyendolo línea por línea. Por cada línea crea un registro e intenta agregarlo al vector. La función de lectura intenta leer todo el archivo o hasta encontrar el primer error. Devuelve un vector con todos los registros creados.
+Use 3 `Listas`, Una para almacenar los pokemones seleccionados para el juego (debido a que obtengo el pokemon de la Pokedex en una posicion al azar), y la otra Lista es una lista de posiciones de los pokemones que se capturó, debido a que itero la lista de pokemones seleccionados para verificar si el usuario está en la misma posición que alguno de los pokemones (lo que significa que el usuario capturó al pokemon) entonces guardo la posición de dicho pokemon (de la lista de seleccionados) en la lista de capturados para su eliminación de la lista de seleccionados, y la otra Lista es para guardar los grupos formados cuando capturo pokemones.  
+
+Para armar los grupos, utilicé Colas, mejor dicho, la Lista que forma los grupos es una Lista de Colas. Consiste en que, a medida que vayamos formando grupos, meterlos en una Cola, cuando se rompa el multiplicador, esa Cola lo guardo en la última posición de la Lista, como llevo un contador del mayor grupo formado, todos las Colas que tengan la dicha longitud, se mostarán, o sea, si armaste 3 grupos de 5, y 5 es tu mayor grupo formado, se mostrará todos los grupos que formaste de 5, no solo el primero que formaste. Decidí que sea una Cola, porque así podemos ver en orden que capturamos primero y último.
+
+Para saber el último pokemon que capturamos, utilicé una Pila, ya que, con la Pila puedo ver el tope y saber la cantidad de pokemones capturados.  
+
+### Menciones
+- Cuando el usuario tiene un contador superior a uno, supongamos que 3, el siguiente pokemon que atrape, su puntuación se va a multiplicador y se le sumará al puntaje del usuario, de ahí, el multiplicador vuelve a 1.  
+
+
+
+
+
 
 <div align="center">
 <img width="70%" src="img/diagrama1.svg">
 </div>
 
-En el archivo `sarasa.c` la función `funcion1` utiliza `realloc` para agrandar la zona de memoria utilizada para conquistar el mundo. El resultado de `realloc` lo guardo en una variable auxiliar para no perder el puntero original en caso de error:
 
 ```c
 int *vector = realloc(vector_original, (n+1)*sizeof(int));
