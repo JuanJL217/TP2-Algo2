@@ -6,7 +6,7 @@
 opcion_menu_t *crear_opcion(const char indice, const char *texto,
 			    bool (*accion)(void *))
 {
-	opcion_menu_t *opcion = malloc(sizeof(opcion_menu_t));
+	opcion_menu_t *opcion = calloc(1, sizeof(opcion_menu_t));
 	if (!opcion)
 		return NULL;
 	char *string = malloc(strlen(texto) + 1);

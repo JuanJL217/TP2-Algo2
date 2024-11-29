@@ -54,7 +54,7 @@ bool buscar_pokemon_en_orden(void *_pokemon, void *_posicion)
 
 pokemon_t *pokedex_obtener_pokemon(pokedex_t *pokedex, size_t posicion)
 {
-	if (!pokedex)
+	if (!pokedex || posicion >= pokedex_cantidad(pokedex))
 		return NULL;
 	pokemon_ubicacion ubicacion = { .pokemon = NULL,
 					.posicion = 0,
