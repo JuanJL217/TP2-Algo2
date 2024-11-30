@@ -121,11 +121,15 @@ Una vez que capturamos a un pokemon, este se guardará en una `Pila`, con esto, 
 Ya me que mencionamos la lógica del último pokemon capturado y el multiplicador, ahora toca mencionar la lógica sobre las puntuaciones del jugador. Si el siguiente pokemon que se capture, tiene las mismas condiciones mencionadas anteriormente, dicho puntaje del pokemon que haya sido atrapado en ese momento, se muliplicada por el multiplicador del usuario actual y se le sumará al puntaje del jugador, luego se le subirá en 1 el multiplicador. Caso contrario que cpaturé un pokemon que no cumpla una de las 2 condiciones para que siga subiendo el multiplicador, primero se multiplica el puntaje del nuevo pokemon capturado por el multiplicador actual y se le suma el resultado al puntaje del jugador, luego se procede a mandar el muliplicador a su estado base, que es un `x1`.
 
 ### El mayor grupo formado
-Como ya entendemos cómo funciona los puntajes, y el último pokemon capturado, podemos hablar de la formación de los grupos que el jugador haya capturado. El grupo se forma a partir de un contador x1 y creciendo, o sea, 
+Como ya entendemos cómo funciona los puntajes, y el último pokemon capturado, podemos hablar de la formación de los grupos que el jugador haya capturado. Como se sabe un grupo es formado por la sucesión de pokemones que aumentan el multiplicador. Para conocer el maximo grupo, lo plantie como una Lista de Colas. La Cola lo uso para reinur el conjunto de pokemones, y así cuando quiera mostrar el maximo grupo, que sea por orden de cómo se agregó, y la Lista es para tener el registro de todos los grupos que se formaron.
+
+<div align="center">
+<img width="70%" src="img/grupos_formados.png">
+</div>
 
 
 
 <div align="center">
-<img width="70%" src="lista_pokemones_seleccionados.png">
+<img width="70%" src="img/maximo_grupo_formado.png">
 </div>
 
