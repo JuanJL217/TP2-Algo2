@@ -59,16 +59,18 @@ void dibujar_tablero(tablero_t *tablero)
 void mostrar_informacion_por_pantalla(size_t *tiempo, size_t* semilla, size_t tiempo_maximo, Pila *capturados,
 				      usuario *usuario, tablero_t *tablero)
 {
+	printf("Utilizar %s⬆⬇⬅➡%s para moverse\n", ANSI_COLOR_CYAN, ANSI_COLOR_RESET);
+	printf("Presionar %sq%s para finalizar el juego\n", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	(*tiempo)++;
 	if ((tiempo_maximo - (*tiempo/5)) > 10) {
 		printf("⏳%s%li%s ", ANSI_COLOR_BLUE, tiempo_maximo - (*tiempo/5), ANSI_COLOR_RESET);
 	} else {
 		printf("⌛%s%li%s ", ANSI_COLOR_RED, tiempo_maximo - (*tiempo/5), ANSI_COLOR_RESET);	
 	}
-	printf("👣%s%li%s 💲%s%li%s %s(x%li)%s\n", ANSI_COLOR_BLUE, usuario->cantidad_pasos, ANSI_COLOR_RESET, 
-	ANSI_COLOR_GREEN, usuario->puntaje, ANSI_COLOR_RESET, ANSI_COLOR_YELLOW, usuario->multiplicador, ANSI_COLOR_RESET);
+	printf("👣%s%li%s 💲%s%li%s %s(x%li)%s 🌱 %s%li%s\n", ANSI_COLOR_BLUE, usuario->cantidad_pasos, ANSI_COLOR_RESET, 
+	ANSI_COLOR_GREEN, usuario->puntaje, ANSI_COLOR_RESET, ANSI_COLOR_YELLOW, usuario->multiplicador, ANSI_COLOR_RESET, ANSI_COLOR_CYAN, *semilla, ANSI_COLOR_RESET);
 	dibujar_tablero(tablero);
-	printf("🌱 %s%li%s\n", ANSI_COLOR_CYAN, *semilla, ANSI_COLOR_RESET);
+	// printf("🌱 %s%li%s\n", ANSI_COLOR_CYAN, *semilla, ANSI_COLOR_RESET);
 	printf("%sCantidad capturados:%s %li\n", ANSI_COLOR_MAGENTA, ANSI_COLOR_RESET, pila_cantidad(capturados));
 	if (!pila_esta_vacía(capturados)) {
 		pokemon_seleccionado *pokemon =
@@ -91,17 +93,21 @@ bool mostrar_primer_grupo_maximo(void *_grupo_formado, void *cantidad_maxima)
 			destruir_pokemones_seleccionados((void*)pokemon);
 		}
 		printf("\n");
+		return false;
 	}
 	return true;
 }
 
 void mostrar_resultados(Lista* grupos_formados, size_t maximo_grupo_formado, size_t multiplicador_maximo, size_t puntaje_personaje)
 {
-	printf("%sMaximo grupo formado(s):%s\n", ANSI_COLOR_MAGENTA, ANSI_COLOR_RESET);
+	printf("%s¡¡¡FIN DEL JUEGO!!!%s\n", ANSI_COLOR_RED, ANSI_COLOR_RESET);
+	printf("%s        RESULTADOS        %s\n", ANSI_BG_MAGENTA, ANSI_BG_RESET);
+	printf("%sMaximo grupo formado:%s\n", ANSI_COLOR_MAGENTA, ANSI_COLOR_RESET);
 	if (maximo_grupo_formado >= 2) {
+		printf("%s - Maximo grupo es de %li -> %s", ANSI_COLOR_CYAN, maximo_grupo_formado, ANSI_COLOR_RESET);
 		lista_iterar_elementos(grupos_formados, mostrar_primer_grupo_maximo, (void*)&maximo_grupo_formado);
 	} else {
-		printf("Nigun grupo formado. Necesitas un grupo de 2 como mínimo\n");
+		printf("%s - Necesitas un grupo de 2 como mínimo%s\n", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	}
 	printf("%sMultiplicador maximo: %li%s\n", ANSI_COLOR_YELLOW, multiplicador_maximo, ANSI_COLOR_RESET);
 	printf("%sTu puntaje final fue de: %li%s\n", ANSI_COLOR_GREEN, puntaje_personaje, ANSI_COLOR_RESET);
