@@ -89,6 +89,11 @@ booleanos banderas = { .menu_seguir = true,
 ### Selección de pokemones
 Para poder obtener los pokemones que estarán en el tablero, vamos usar la función `pokedex_obtener_pokemon` y la posición que obtengemos será aleatoria, por eso, vamos a usar `rand` que va desde el 0 hasta la cantidad de pokemones que hay en la Pokedex. Los pokemones que se obtengan, se les copiará la información a un nuevo tipo de dato el cual es `pokemon_seleccionado`, el cual obtiene referencia a `x` e `y`, que es donde se encontrará en el tablero, y ese pokemones que se seleccionó, se lo guardará en una `Lista`, insertando al final cada nuevo pokemon seleccionado.
 
+<div align="center">
+<img width="70%" src="lista_pokemones_seleccionados.png">
+</div>
+
+
 ### Movimientos
 La lógica para que el pokemon siga su patrón de movimiento, es iterar el conjuto de caracteres, ejemplo: Si un pokemon tiene los movimientos "JRNE.  
 1) Primera iteración: "J", se moverá de la misma manera que se movió el jugador.
@@ -100,6 +105,10 @@ Con esto garantizamos que cada pokemon realice su patrón de movimiento.
 
 ### Capturar pokemones
 Una vez que el usuario y los pokemones hayan hecho su respectivo movimiento, se iterará la Lista de los pokemones seleccionados para ver si hay pokemones en la misma posición del usuario, de ser así, significa que el usuario capturó a dicho pokemon. Al saber que pueden haber más de 1 pokemon por posición, siempre tomaremos en cuenta último pokemon que se iteró con la misma posicion del usuario, y ese será el último pokemon que capturamos. La lógica para que esto suceda, es la siguiente: Una vez que iteramos, y encontramos al pokemon en la misma posición del usuario, se guardará un contador de posiciones, y dicha posición, se guardará en una `Lista` que lleve el listado de las posiciones de los pokemones que el usuario capturó. Luego se iteterá esta última Lista de posiciones para poder dar la lógica de captura y/o liberación.
+
+<div align="center">
+<img width="70%" src="capturar_pokemones.png">
+</div>
 
 ### Ultimo pokemon capturado
 Una vez que capturamos a un pokemon, este se guardará en una `Pila`, con esto, llevaremos la cantidad de pokemones capturados sabiedo la cantidad de elementos en la Pila, y podemos obtener el último pokemon que capturamos con la función de `ver_tope`. Si el siguiente pokemon que atrapemos, tiene el mismo caracter que el último pokemon que capturamos o su mismo color, el multiplicador se elevará.

@@ -14,6 +14,16 @@ bool imprimir_opciones(void *_opcion, void *nada)
 	return true;
 }
 
+bool imprimir_pokemones(pokemon_t *pokemon, void *_colores)
+{
+	hash_t *colores = (hash_t *)_colores;
+	char *color = hash_buscar(colores, pokemon->color);
+	printf("  %s~%s %s%s (%s) -> %s%d puntos\n", color, ANSI_COLOR_RESET,
+	       color, pokemon->nombre, pokemon->movimientos, ANSI_COLOR_RESET,
+	       pokemon->puntaje);
+	return true;
+}
+
 void dibujar_tablero(tablero_t *tablero)
 {	
 	char* color_bordes = ANSI_COLOR_GREEN;
@@ -46,16 +56,6 @@ void dibujar_tablero(tablero_t *tablero)
 	printf("%s┛%s\n", color_bordes, ANSI_COLOR_RESET);
 }
 
-bool imprimir_pokemones(pokemon_t *pokemon, void *_colores)
-{
-	hash_t *colores = (hash_t *)_colores;
-	char *color = hash_buscar(colores, pokemon->color);
-	printf("  %s~%s %s%s (%s) -> %s%d puntos\n", color, ANSI_COLOR_RESET,
-	       color, pokemon->nombre, pokemon->movimientos, ANSI_COLOR_RESET,
-	       pokemon->puntaje);
-	return true;
-}
-
 void mostrar_informacion_por_pantalla(size_t *tiempo, size_t* semilla, size_t tiempo_maximo, Pila *capturados,
 				      usuario *usuario, tablero_t *tablero)
 {
@@ -69,13 +69,13 @@ void mostrar_informacion_por_pantalla(size_t *tiempo, size_t* semilla, size_t ti
 	ANSI_COLOR_GREEN, usuario->puntaje, ANSI_COLOR_RESET, ANSI_COLOR_YELLOW, usuario->multiplicador, ANSI_COLOR_RESET);
 	dibujar_tablero(tablero);
 	printf("🌱 %s%li%s\n", ANSI_COLOR_CYAN, *semilla, ANSI_COLOR_RESET);
+	printf("%sCantidad capturados:%s %li\n", ANSI_COLOR_MAGENTA, ANSI_COLOR_RESET, pila_cantidad(capturados));
 	if (!pila_esta_vacía(capturados)) {
 		pokemon_seleccionado *pokemon =
 			(pokemon_seleccionado *)pila_tope(capturados);
-		printf("Último Pokemon capturado: %s%s%s\n", pokemon->color,
+		printf("%sÚltimo Pokemon capturado: %s%s\n", pokemon->color,
 		       pokemon->nombre, ANSI_COLOR_RESET);
 	}
-	printf("Cantidad capturados: %li\n", pila_cantidad(capturados));
 }
 
 bool mostrar_primer_grupo_maximo(void *_grupo_formado, void *cantidad_maxima)
@@ -91,21 +91,20 @@ bool mostrar_primer_grupo_maximo(void *_grupo_formado, void *cantidad_maxima)
 			destruir_pokemones_seleccionados((void*)pokemon);
 		}
 		printf("\n");
-		return false;
 	}
 	return true;
 }
 
 void mostrar_resultados(Lista* grupos_formados, size_t maximo_grupo_formado, size_t multiplicador_maximo, size_t puntaje_personaje)
 {
-	printf("Maximo grupo formado: ");
+	printf("%sMaximo grupo formado(s):%s\n", ANSI_COLOR_MAGENTA, ANSI_COLOR_RESET);
 	if (maximo_grupo_formado >= 2) {
 		lista_iterar_elementos(grupos_formados, mostrar_primer_grupo_maximo, (void*)&maximo_grupo_formado);
 	} else {
-		printf("\nNigun grupo formado. Necesitas un grupo de 2 como mínimo\n");
+		printf("Nigun grupo formado. Necesitas un grupo de 2 como mínimo\n");
 	}
-	printf("Multiplicador maximo: %li\n", multiplicador_maximo);
-	printf("Tu puntaje final fue de: %li\n", puntaje_personaje);
+	printf("%sMultiplicador maximo: %li%s\n", ANSI_COLOR_YELLOW, multiplicador_maximo, ANSI_COLOR_RESET);
+	printf("%sTu puntaje final fue de: %li%s\n", ANSI_COLOR_GREEN, puntaje_personaje, ANSI_COLOR_RESET);
 }
 
 size_t pedir_numero(const char *mensaje) {
