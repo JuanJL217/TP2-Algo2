@@ -108,27 +108,11 @@ Una vez que capturamos a un pokemon, este se guardará en una `Pila`, con esto, 
 Ya me que mencionamos la lógica del último pokemon capturado y el multiplicador, ahora toca mencionar la lógica sobre las puntuaciones del jugador. Si el siguiente pokemon que se capture, tiene las mismas condiciones mencionadas anteriormente, dicho puntaje del pokemon que haya sido atrapado en ese momento, se muliplicada por el multiplicador del usuario actual y se le sumará al puntaje del jugador, luego se le subirá en 1 el multiplicador. Caso contrario que cpaturé un pokemon que no cumpla una de las 2 condiciones para que siga subiendo el multiplicador, primero se multiplica el puntaje del nuevo pokemon capturado por el multiplicador actual y se le suma el resultado al puntaje del jugador, luego se procede a mandar el muliplicador a su estado base, que es un `x1`.
 
 ### El mayor grupo formado
+Como ya entendemos cómo funciona los puntajes, y el último pokemon capturado, podemos hablar de la formación de los grupos que el jugador haya capturado. El grupo se forma a partir de un contador x1 y creciendo, o sea, 
 
-### Tiempo
 
-###
-Una vez que hayamos elegido la opción de jugar, vamos a entrar al apartado de las inicializaciones.  
-Aquí vamos a crear y cargar los datos para la Pokedex, los colores y los movimientos. Una vez que creamos y cargamos los datos, pasaremos a crear el tablero y a verificar si tenemos una semilla o no. Inicializaremos el tipo de dato `usuario`, para nuestro personaje, dandole valores iniciales como la posicion, el puntaje, etc.  
-Para iniciar con el juego, vamos a tener que elegir pokemones al azar con la función 'pokedex_obtener_pokemon', el cuál, el rango va a ser desde 0 hasta la cantidad de pokemones que halla en la pokedex (usando rand). Para almacenar los pokemones que hayan sido seleccionados, serán en una `Lista`. Tambien vamos a inicializar otras 2 listas, una será para guardar la posición del pokemon que hallamos capturado y la otra será para almacenar los grupos que hayamos formado (en busca el mayor grupo formado).
 
 <div align="center">
 <img width="70%" src="lista_pokemones_seleccionados.png">
 </div>
 
-También inicializaremos una Pila, con el cual almacenaremos los pokemones que hayamos capturado en el transcurso del juego y el cuál da la lógica de poder saber cuál fue el último pokemon que capturamos.
-
-
-
-
-Empezando por el uso del `Hash`, para almacenar los colores, el cual, escribiendo la clave del color ("Rojo"), obtengo su código ANSI.  
-
-Use 3 `Listas`, Una para almacenar los pokemones seleccionados para el juego (debido a que obtengo el pokemon de la Pokedex en una posicion al azar), y la otra Lista es una lista de posiciones de los pokemones que se capturó, debido a que itero la lista de pokemones seleccionados para verificar si el usuario está en la misma posición que alguno de los pokemones (lo que significa que el usuario capturó al pokemon) entonces guardo la posición de dicho pokemon (de la lista de seleccionados) en la lista de capturados para su eliminación de la lista de seleccionados, y la otra Lista es para guardar los grupos formados cuando capturo pokemones.  
-
-Para armar los grupos, utilicé Colas, mejor dicho, la Lista que forma los grupos es una Lista de Colas. Consiste en que, a medida que vayamos formando grupos, meterlos en una Cola, cuando se rompa el multiplicador, esa Cola lo guardo en la última posición de la Lista, como llevo un contador del mayor grupo formado, todos las Colas que tengan la dicha longitud, se mostarán, o sea, si armaste 3 grupos de 5, y 5 es tu mayor grupo formado, se mostrará todos los grupos que formaste de 5, no solo el primero que formaste. Decidí que sea una Cola, porque así podemos ver en orden que capturamos primero y último.
-
-Para saber el último pokemon que capturamos, utilicé una Pila, ya que, con la Pila puedo ver el tope y saber la cantidad de pokemones capturados.  

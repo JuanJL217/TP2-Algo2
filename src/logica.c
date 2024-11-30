@@ -13,98 +13,11 @@
 #include "cola.h"
 #include "cargar_elementos.h"
 #include "menu.h"
+#include "pokedex.h"
+#include "estructuras_jugabilidad.h"
+#include "mostrar_informacion.h"
 
-const char CARACTER_USUARIO = '&';
-
-typedef struct jugador_en_juego {
-	char caracter;
-	char *color;
-	size_t cantidad_pasos;
-	size_t puntaje;
-	size_t multiplicador;
-	size_t multiplicador_maximo;
-	size_t y;
-	size_t x;
-} usuario;
-
-typedef struct pokemon_en_juego {
-	char *nombre;
-	char caracter;
-	char *color;
-	char *movimientos;
-	size_t puntaje;
-	size_t y;
-	size_t x;
-} pokemon_seleccionado;
-
-typedef struct informacion_para_el_juego {
-	usuario *personaje;
-	Lista *pokemones_seleccionados;
-	Lista *posiciones_pokemones_capturados;
-	tablero_t *tablero;
-	movimientos_t *movimientos;
-	booleanos *banderas;
-	Pila *pokemones_capturados;
-	Lista *grupos_formados;
-	size_t maximo_grupo_formado;
-	size_t contador_grupos;
-	size_t tiempo;
-} informacion_juego;
-
-typedef struct logica_dentro_del_loop {
-	char *direccion_usuario;
-	size_t posicion_pokemon_eliminado;
-	informacion_juego *informacion;
-} informacion_loop;
-
-void destruir_pokemones_seleccionados(void *_pokemon)
-{	
-	pokemon_seleccionado* pokemon = (pokemon_seleccionado *)_pokemon;
-	free(pokemon->nombre);
-	free(pokemon);
-}
-
-void dibujar_tablero(tablero_t *tablero)
-{	
-	char* color_bordes = ANSI_COLOR_GREEN;
-	size_t cantidad_filas = tablero_cantidad_filas(tablero);
-	size_t cantidad_columnas = tablero_cantidad_columnas(tablero);
-	
-	printf("%s┏%s", color_bordes, ANSI_COLOR_RESET);
-	for (size_t columna = 0; columna < cantidad_columnas; columna++) {
-		printf("%s━%s", color_bordes, ANSI_COLOR_RESET);
-	}
-	printf("%s┓%s\n", color_bordes, ANSI_COLOR_RESET);
-
-	for (size_t fila = 0; fila < cantidad_filas; fila++) {
-		printf("%s┃%s", color_bordes, ANSI_COLOR_RESET);
-		for (size_t columna = 0; columna < cantidad_columnas;
-		     columna++) {
-			char caracter;
-			char* color_caracter;
-			tablero_posicion_informacion(tablero, fila, columna, &caracter, &color_caracter);
-			printf("%s%c%s", color_caracter, caracter, ANSI_COLOR_RESET);
-		}
-		printf("%s┃%s", color_bordes, ANSI_COLOR_RESET);
-		printf("\n");
-	}
-
-	printf("%s┗%s", color_bordes, ANSI_COLOR_RESET);
-	for (size_t columna = 0; columna < cantidad_columnas; columna++) {
-		printf("%s━%s", color_bordes, ANSI_COLOR_RESET);
-	}
-	printf("%s┛%s\n", color_bordes, ANSI_COLOR_RESET);
-}
-
-bool imprimir_pokemones(pokemon_t *pokemon, void *_colores)
-{
-	hash_t *colores = (hash_t *)_colores;
-	char *color = hash_buscar(colores, pokemon->color);
-	printf("  %s~%s %s%s (%s) -> %s%d puntos\n", color, ANSI_COLOR_RESET,
-	       color, pokemon->nombre, pokemon->movimientos, ANSI_COLOR_RESET,
-	       pokemon->puntaje);
-	return true;
-}
+const char CARACTER_USUARIO = '#';
 
 bool cargar_pokedex_y_colores(booleanos* banderas)
 {
@@ -302,28 +215,6 @@ bool procesar_pokemon_capturado(Lista *posiciones, Lista *seleccionados,
 	return true;
 }
 
-void mostrar_informacion_por_pantalla(size_t *tiempo, size_t* semilla, size_t tiempo_maximo, Pila *capturados,
-				      usuario *usuario, tablero_t *tablero)
-{
-	(*tiempo)++;
-	if ((tiempo_maximo - (*tiempo/5)) > 10) {
-		printf("⏳%s%li%s\n", ANSI_COLOR_BLUE, tiempo_maximo - (*tiempo/5), ANSI_COLOR_RESET);
-	} else {
-		printf("⌛%s%li%s\n", ANSI_COLOR_RED, tiempo_maximo - (*tiempo/5), ANSI_COLOR_RESET);	
-	}
-	printf("👣%s%li%s 💲%s%li%s %s(x%li)%s\n", ANSI_COLOR_BLUE, usuario->cantidad_pasos, ANSI_COLOR_RESET, 
-	ANSI_COLOR_GREEN, usuario->puntaje, ANSI_COLOR_RESET, ANSI_COLOR_YELLOW, usuario->multiplicador, ANSI_COLOR_RESET);
-	dibujar_tablero(tablero);
-	printf("🌱 %s%li%s\n", ANSI_COLOR_CYAN, *semilla, ANSI_COLOR_RESET);
-	if (!pila_esta_vacía(capturados)) {
-		pokemon_seleccionado *pokemon =
-			(pokemon_seleccionado *)pila_tope(capturados);
-		printf("Último Pokemon capturado: %s%s%s\n", pokemon->color,
-		       pokemon->nombre, ANSI_COLOR_RESET);
-	}
-	printf("Cantidad capturados: %li\n", pila_cantidad(capturados));
-}
-
 void usuario_movimiento(tablero_t* tablero, usuario* usuario, char* tipo_movimiento, movimientos_t* movimientos, size_t fila_actual, size_t columna_actual)
 {
 	size_t filas = tablero_cantidad_filas(tablero);
@@ -389,23 +280,6 @@ int logica_juego(int entrada, void *_dato)
 	return entrada == 'q' || entrada == 'Q';
 }
 
-bool mostrar_grupos_maximo_formado(void *_grupo_formado, void *cantidad_maxima)
-{
-	Cola *grupo_formado = (Cola *)_grupo_formado;
-	if (cola_cantidad(grupo_formado) == *(size_t *)cantidad_maxima) {
-		while (!cola_esta_vacía(grupo_formado)) {
-			pokemon_seleccionado *pokemon =
-				(pokemon_seleccionado *)cola_desencolar(
-					grupo_formado);
-			printf("%s%c%s", pokemon->color, pokemon->caracter,
-			       ANSI_COLOR_RESET);
-			destruir_pokemones_seleccionados((void*)pokemon);
-		}
-		printf("\n");
-	}
-	return true;
-}
-
 void destruir_colas(void *_cola)
 {
 	cola_destruir_todo((Cola *)_cola, destruir_pokemones_seleccionados);
@@ -466,25 +340,8 @@ informacion_juego *inicializar_informacion(tablero_t *tablero, booleanos *bander
 	return informacion;
 }
 
-bool jugar_partida(void *_banderas)
+usuario crear_jugador()
 {
-	borrar_pantalla();
-	booleanos *banderas = (booleanos *)_banderas;
-	if (!cargar_pokedex_y_colores(banderas))
-		return false;
-	movimientos_t *movimientos = movimientos_cargados();
-	if (!movimientos)
-		return false;
-	tablero_t *tablero = tablero_crear(banderas->cantidad_filas, banderas->cantidad_columas);
-	if (!tablero)
-		return false;
-	if (!banderas->semilla) {
-		size_t semilla = (size_t)time(NULL);
-		srand((unsigned int)semilla);
-		banderas->semilla = &semilla;
-	} else {
-		srand((unsigned int)*banderas->semilla);
-	}
 	usuario jugador = { .caracter = CARACTER_USUARIO,
 			    .color = ANSI_COLOR_WHITE,
 			    .cantidad_pasos = 0,
@@ -493,6 +350,28 @@ bool jugar_partida(void *_banderas)
 				.multiplicador_maximo = 1,
 			    .y = 0,
 			    .x = 0 };
+	return jugador;
+}
+
+void destruir_movimientos_y_tablero(tablero_t* tablero, movimientos_t* movimientos)
+{
+	if (tablero)
+		tablero_destruir(tablero);
+	if (movimientos)
+		movimientos_destruir(movimientos);
+}
+
+bool jugar_partida(void *_banderas)
+{
+	borrar_pantalla();
+	booleanos *banderas = (booleanos *)_banderas;
+	movimientos_t *movimientos = movimientos_cargados();
+	tablero_t *tablero = tablero_crear(banderas->cantidad_filas, banderas->cantidad_columas);
+	if (!tablero || !movimientos || !cargar_pokedex_y_colores(banderas)) {
+		destruir_movimientos_y_tablero(tablero, movimientos);
+		return false;	
+	}
+	usuario jugador = crear_jugador();
 	informacion_juego *juego = inicializar_informacion(tablero, banderas,
 						       &jugador, movimientos);
 	if (!juego)
@@ -501,27 +380,28 @@ bool jugar_partida(void *_banderas)
 	esconder_cursor();
 	game_loop(logica_juego, (void *)juego);
 	mostrar_cursor();
-	printf("Maximo(s) grupo(s) formado(s):\n");
-	if (lista_iterar_elementos(juego->grupos_formados,
-			       mostrar_grupos_maximo_formado,
-			       &juego->maximo_grupo_formado) == 0) {
-		printf("Nigun grupo formado\n");
-	}
-	printf("Multiplicador maximo: %li\n", juego->personaje->multiplicador_maximo);
-	printf("Tu puntaje final fue de: %li\n", juego->personaje->puntaje);
-
+	mostrar_resultados(juego->grupos_formados, juego->maximo_grupo_formado, juego->personaje->multiplicador_maximo, juego->personaje->puntaje);
 	destruir_almacenacimientos_pokemon(juego->grupos_formados,
 					   juego->pokemones_seleccionados,
 					   juego->posiciones_pokemones_capturados,
 					   juego->pokemones_capturados);
-	tablero_destruir(tablero);
-	movimientos_destruir(movimientos);
+	destruir_movimientos_y_tablero(tablero, movimientos);
 	free(juego);
 	banderas->menu_seguir = false;
 	return true;
 }
 
 // JUGAR CON SEMILLA
+
+bool jugar_con_semilla_random(void *_banderas)
+{
+	booleanos *banderas = (booleanos *)_banderas;
+	size_t semilla = (size_t)time(NULL);
+	srand((unsigned int)semilla);
+	banderas->semilla = &semilla;
+	jugar_partida((void *)banderas);
+	return true;
+}
 
 bool jugar_con_semilla(void *_banderas)
 {
@@ -537,20 +417,12 @@ bool jugar_con_semilla(void *_banderas)
 	}
 	booleanos *banderas = (booleanos *)_banderas;
 	banderas->semilla = &semilla;
+	srand((unsigned int)*banderas->semilla);
 	jugar_partida((void *)banderas);
 	return true;
 }
 
 // OPCIONES ADICIONALES
-
-bool imprimir_opciones_extras(void *_opcion, void *nada)
-{
-	opcion_menu_t *opcion = (opcion_menu_t *)_opcion;
-	printf("   (" ANSI_COLOR_RED "%c" ANSI_COLOR_RESET ") " ANSI_COLOR_BLUE
-	       "%s" ANSI_COLOR_RESET "\n",
-	       opcion->indice, opcion->texto);
-	return true;
-}
 
 bool modificar_cantidad_pokemones(void* _banderas)
 {
@@ -570,26 +442,8 @@ bool modificar_cantidad_pokemones(void* _banderas)
 bool modificar_tiempo(void* _banderas)
 {
 	booleanos* banderas = (booleanos*)_banderas;
-	char texto[MAX_CARACTERES];
-	bool seguir = true;
-	while (seguir) {
-		printf("Ingrese la duración del juego (solo valor numerico): ");
-		if (es_numero(texto)) {
-			banderas->tiempo_maximo = strtoull(texto, NULL, 10);
-			seguir = false;
-		}
-	}
+	banderas->tiempo_maximo = pedir_numero("Ingrese la duración del juego (solo valor numerico): ");
 	return true;
-}
-
-size_t pedir_numero(const char *mensaje) {
-    char texto[MAX_CARACTERES];
-    while (true) {
-        printf("%s", mensaje);
-        if (es_numero(texto)) {
-            return strtoull(texto, NULL, 10);
-    	}
-	}
 }
 
 bool modificar_dimensiones_tablero(void* _banderas)
@@ -607,51 +461,6 @@ bool volver_al_menu(void* _banderas)
 	return true;
 }
 
-bool agregar_opciones_extras(menu_t* opciones_extras)
-{
-	menu_ingresar_opcion(opciones_extras, 'M', "Modificar cantidad de Pokemones en Juego", modificar_cantidad_pokemones);
-	menu_ingresar_opcion(opciones_extras, 'T', "Modifcar Tiempo", modificar_tiempo);
-	menu_ingresar_opcion(opciones_extras, 'F', "Modificar cantidad Filas y Columnas", modificar_dimensiones_tablero);
-	menu_ingresar_opcion(opciones_extras, 'V', "Volver al menu", volver_al_menu);
-
-	if (menu_cantidad(opciones_extras) != 4) {
-		menu_destruir(opciones_extras);
-		return false;
-	}
-	return true;
-}
-
-bool opciones_jugar(void* _banderas)
-{	
-	booleanos* banderas = (booleanos*)_banderas;
-	menu_t *opciones_extras = menu_crear();
-	if (!opciones_extras) {
-		printf("No se pudo crear el menú de opciones\n");
-		salir_del_menu(_banderas);
-		return false;
-	}
-
-	if (!agregar_opciones_extras(opciones_extras)) {
-		printf("Fallo en la creación de las opciones\n");
-		salir_del_menu(_banderas);
-		return false;
-	}
-	borrar_pantalla();
-	char texto[MAX_CARACTERES];
-	banderas->opciones_seguir = true;
-	while (banderas->opciones_seguir) {
-		menu_iterar_opciones(opciones_extras, imprimir_opciones_extras, NULL);
-		if (es_caracter(texto)) {
-			char mayuscula = caracter_mayuscula(texto);
-			menu_ejecutar_opcion(opciones_extras, mayuscula,
-					     (void *)banderas);
-		}
-	}
-	menu_destruir(opciones_extras);
-	borrar_pantalla();
-	return true;
-}
-
 // restablecer valores
 
 bool restablecer_valores(void *_banderas) 
@@ -665,7 +474,6 @@ bool restablecer_valores(void *_banderas)
 
 }
 
-// SALIR_DE_MENU
 
 bool salir_del_menu(void *_banderas)
 {

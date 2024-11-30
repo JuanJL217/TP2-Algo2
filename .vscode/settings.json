@@ -4,7 +4,11 @@
         "string.h": "c",
         "engine.h": "c",
         "ansi.h": "c",
-        "pa2m.h": "c"
+        "pa2m.h": "c",
+        "cola.h": "c",
+        "pokedex.h": "c",
+        "mostrar_informacion.h": "c",
+        "estructuras_jugabilidad.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
