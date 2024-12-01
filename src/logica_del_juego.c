@@ -7,7 +7,7 @@
 #include "verificaciones.h"
 #include "lista.h"
 #include "tablero.h"
-#include "logica.h"
+#include "logica_del_juego.h"
 #include "movimientos.h"
 #include "pila.h"
 #include "cola.h"
@@ -57,33 +57,33 @@ void pokemon_movimiento(pokemon_seleccionado* pokemon , tablero_t* tablero, movi
 bool movimientos_pokemones(void *_pokemon, void *_dato)
 {
 	pokemon_seleccionado *pokemon = (pokemon_seleccionado *)_pokemon;
-	informacion_loop *juego = (informacion_loop *)_dato;
+	informacion_juego* juego = (informacion_juego *)_dato;
 	size_t y_antes = pokemon->y;
 	size_t x_antes = pokemon->x;
-	if (juego->direccion_usuario) {
-		pokemon_movimiento(pokemon, juego->informacion->tablero, juego->informacion->movimientos, juego->direccion_usuario);
+	if (juego->personaje->direccion) {
+		pokemon_movimiento(pokemon, juego->tablero, juego->movimientos, juego->personaje->direccion);
 	}
-	if (juego->informacion->personaje->x == pokemon->x &&
-	    juego->informacion->personaje->y == pokemon->y) {
-		tablero_mover_elemento(juego->informacion->tablero, y_antes,
+	if (juego->personaje->x == pokemon->x &&
+	    juego->personaje->y == pokemon->y) {
+		tablero_mover_elemento(juego->tablero, y_antes,
 				       x_antes, pokemon->y, pokemon->x,
-				       juego->informacion->personaje->caracter,
-				       juego->informacion->personaje->color);
+				       juego->personaje->caracter,
+				       juego->personaje->color);
 		size_t *posicion_pokemon_capturado = calloc(1, sizeof(size_t));
 		if (!posicion_pokemon_capturado) {
 			return false;
 		}
 		*posicion_pokemon_capturado = juego->posicion_pokemon_eliminado;
-		lista_agregar_al_final(juego->informacion->posiciones_pokemones_capturados,
+		lista_agregar_al_final(juego->posiciones_pokemones_capturados,
 				       (void *)posicion_pokemon_capturado);
-	} else if (juego->informacion->personaje->x == x_antes &&
-		   juego->informacion->personaje->y == y_antes) {
-		tablero_mover_elemento(juego->informacion->tablero, pokemon->y,
+	} else if (juego->personaje->x == x_antes &&
+		   juego->personaje->y == y_antes) {
+		tablero_mover_elemento(juego->tablero, pokemon->y,
 				       pokemon->x, pokemon->y, pokemon->x,
-				       juego->informacion->personaje->caracter,
-				       juego->informacion->personaje->color);
+				       juego->personaje->caracter,
+				       juego->personaje->color);
 	} else {
-		tablero_mover_elemento(juego->informacion->tablero, y_antes,
+		tablero_mover_elemento(juego->tablero, y_antes,
 				       x_antes, pokemon->y, pokemon->x,
 				       pokemon->caracter, pokemon->color);
 	}
@@ -112,10 +112,17 @@ bool seleccion_de_pokemon(pokedex_t *pokedex, hash_t *colores,
 		free(pokemon_objetivo);
 		return false;
 	}
+	pokemon_objetivo->movimientos = calloc(1, strlen(pokemon->movimientos)+1);
+		if (!pokemon_objetivo->movimientos) {
+			free(pokemon_objetivo->nombre);
+			free(pokemon_objetivo);
+			return false;
+		}
+
 	strcpy(pokemon_objetivo->nombre, pokemon->nombre);
+	strcpy(pokemon_objetivo->movimientos, pokemon->movimientos);
 	pokemon_objetivo->caracter = pokemon->nombre[0];
 	pokemon_objetivo->color = color_obtenido;
-	pokemon_objetivo->movimientos = pokemon->movimientos;
 	pokemon_objetivo->puntaje = (size_t)pokemon->puntaje;
 	pokemon_objetivo->x = (size_t)columna;
 	pokemon_objetivo->y = (size_t)fila;
@@ -231,50 +238,48 @@ void usuario_movimiento(tablero_t* tablero, usuario* usuario, char* tipo_movimie
 int logica_juego(int entrada, void *_dato)
 {
 	borrar_pantalla();
-	informacion_juego *dato = (informacion_juego *)_dato;
-	informacion_loop juego = { .direccion_usuario = NULL,
-			  .informacion = dato,
-			  .posicion_pokemon_eliminado = 0 };
-	size_t x_antes = juego.informacion->personaje->x;
-	size_t y_antes = juego.informacion->personaje->y;
+	informacion_juego *juego = (informacion_juego *)_dato;
+	juego->personaje->direccion = NULL;
+	juego->posicion_pokemon_eliminado = 0;
+	size_t x_antes = juego->personaje->x;
+	size_t y_antes = juego->personaje->y;
 
 	if (entrada == TECLA_DERECHA) {
-		juego.direccion_usuario = "E";
+		juego->personaje->direccion  = "E";
 	} else if (entrada == TECLA_IZQUIERDA) {
-		juego.direccion_usuario = "O";
+		juego->personaje->direccion  = "O";
 	} else if (entrada == TECLA_ARRIBA) {
-		juego.direccion_usuario = "N";
+		juego->personaje->direccion  = "N";
 	} else if (entrada == TECLA_ABAJO) {
-		juego.direccion_usuario = "S";
+		juego->personaje->direccion = "S";
 	}
-
-	if (juego.direccion_usuario) {
-		usuario_movimiento(dato->tablero, dato->personaje, juego.direccion_usuario, dato->movimientos, y_antes, x_antes);
+	if (juego->personaje->direccion) {
+		usuario_movimiento(juego->tablero, juego->personaje, juego->personaje->direccion, juego->movimientos, y_antes, x_antes);
 	}
-
-	lista_iterar_elementos(dato->pokemones_seleccionados,
-			       movimientos_pokemones, (void *)&juego);
+	printf("xdasdasd\n");
+	lista_iterar_elementos(juego->pokemones_seleccionados,
+			       movimientos_pokemones, (void *)juego);
 	size_t cantidad_eliminados =
-		lista_cantidad_elementos(dato->posiciones_pokemones_capturados);
+		lista_cantidad_elementos(juego->posiciones_pokemones_capturados);
 	for (size_t i = 0; i < cantidad_eliminados; i++) {
 		if (!seleccion_de_pokemon(
-			    dato->banderas->pokedex, dato->banderas->colores,
-			    dato->pokemones_seleccionados, dato->tablero)) {
+			    juego->banderas->pokedex, juego->banderas->colores,
+			    juego->pokemones_seleccionados, juego->tablero)) {
 			printf("Erorr al asignar memoria para almacenar el objetivo");
 			entrada = 'q';
 		}
 	}
 	if (!procesar_pokemon_capturado(
-		    dato->posiciones_pokemones_capturados, dato->pokemones_seleccionados,
-		    dato->personaje, dato->grupos_formados,
-		    dato->pokemones_capturados, &dato->contador_grupos,
-		    &dato->maximo_grupo_formado)) {
+		    juego->posiciones_pokemones_capturados, juego->pokemones_seleccionados,
+		    juego->personaje, juego->grupos_formados,
+		    juego->pokemones_capturados, &juego->contador_grupos,
+		    &juego->maximo_grupo_formado)) {
 		return false;
 	}
-	mostrar_informacion_por_pantalla(&dato->tiempo, dato->banderas->semilla, dato->banderas->tiempo_maximo, 
-					 dato->pokemones_capturados,
-					 dato->personaje, dato->tablero);
-	if ((dato->tiempo/5) == dato->banderas->tiempo_maximo) {
+	mostrar_informacion_por_pantalla(&juego->tiempo, juego->banderas->semilla, juego->banderas->tiempo_maximo, 
+					 juego->pokemones_capturados,
+					 juego->personaje, juego->tablero);
+	if ((juego->tiempo/5) == juego->banderas->tiempo_maximo) {
 		entrada = 'q';
 	}
 	return entrada == 'q' || entrada == 'Q';
@@ -317,8 +322,8 @@ informacion_juego *inicializar_informacion(tablero_t *tablero, booleanos *bander
 		seleccion_de_pokemon(banderas->pokedex, banderas->colores,
 				     objetivos_pokemones, tablero);
 	}
-	informacion_juego *informacion = calloc(1, sizeof(informacion_juego));
-	if (!informacion) {
+	informacion_juego *juego = calloc(1, sizeof(informacion_juego));
+	if (!juego) {
 		printf("No se pudo inicializar la información para el juego");
 		destruir_almacenacimientos_pokemon(objetivos_pokemones,
 						   pokemones_eliminados,
@@ -326,18 +331,18 @@ informacion_juego *inicializar_informacion(tablero_t *tablero, booleanos *bander
 						   pokemones_capturados);
 		return NULL;
 	}
-	informacion->personaje = usuario;
-	informacion->tablero = tablero;
-	informacion->movimientos = movimientos;
-	informacion->pokemones_seleccionados = objetivos_pokemones;
-	informacion->posiciones_pokemones_capturados = pokemones_eliminados;
-	informacion->pokemones_capturados = pokemones_capturados;
-	informacion->grupos_formados = grupos_formados;
-	informacion->banderas = banderas;
-	informacion->maximo_grupo_formado = 0;
-	informacion->contador_grupos = 0;
-	informacion->tiempo = 0;
-	return informacion;
+	juego->personaje = usuario;
+	juego->tablero = tablero;
+	juego->movimientos = movimientos;
+	juego->pokemones_seleccionados = objetivos_pokemones;
+	juego->posiciones_pokemones_capturados = pokemones_eliminados;
+	juego->pokemones_capturados = pokemones_capturados;
+	juego->grupos_formados = grupos_formados;
+	juego->banderas = banderas;
+	juego->maximo_grupo_formado = 0;
+	juego->contador_grupos = 0;
+	juego->tiempo = 0;
+	return juego;
 }
 
 usuario crear_jugador()

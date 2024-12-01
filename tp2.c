@@ -7,7 +7,7 @@
 #include "src/hash.h"
 #include "src/menu.h"
 #include "src/pokedex.h"
-#include "src/logica.h"
+#include "src/logica_del_juego.h"
 #include "src/verificaciones.h"
 #include "src/mostrar_informacion.h"
 

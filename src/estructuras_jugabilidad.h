@@ -5,11 +5,12 @@
 #include <stddef.h>
 #include "lista.h"
 #include "pila.h"
-#include "logica.h"
+#include "logica_del_juego.h"
 #include "movimientos.h"
 #include "tablero.h"
 
 typedef struct jugador_en_juego {
+	char *direccion;
 	char caracter;
 	char *color;
 	size_t cantidad_pasos;
@@ -22,10 +23,10 @@ typedef struct jugador_en_juego {
 
 typedef struct pokemon_en_juego {
 	char *nombre;
-	char caracter;
 	char *color;
 	char *movimientos;
 	size_t puntaje;
+	char caracter;
 	size_t y;
 	size_t x;
 } pokemon_seleccionado;
@@ -42,13 +43,8 @@ typedef struct informacion_para_el_juego {
 	size_t maximo_grupo_formado;
 	size_t contador_grupos;
 	size_t tiempo;
-} informacion_juego;
-
-typedef struct logica_dentro_del_loop {
-	char *direccion_usuario;
 	size_t posicion_pokemon_eliminado;
-	informacion_juego *informacion;
-} informacion_loop;
+} informacion_juego;
 
 void destruir_pokemones_seleccionados(void *_pokemon);
 

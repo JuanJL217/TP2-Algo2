@@ -8,7 +8,11 @@
         "cola.h": "c",
         "pokedex.h": "c",
         "mostrar_informacion.h": "c",
-        "estructuras_jugabilidad.h": "c"
+        "estructuras_jugabilidad.h": "c",
+        "logica_del_juego.h": "c",
+        "movimientos.h": "c",
+        "verificaciones.h": "c",
+        "cargar_elementos.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
