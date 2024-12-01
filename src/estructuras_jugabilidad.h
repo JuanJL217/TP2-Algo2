@@ -23,10 +23,10 @@ typedef struct jugador_en_juego {
 
 typedef struct pokemon_en_juego {
 	char *nombre;
+	char caracter;
 	char *color;
 	char *movimientos;
 	size_t puntaje;
-	char caracter;
 	size_t y;
 	size_t x;
 } pokemon_seleccionado;
@@ -37,7 +37,7 @@ typedef struct informacion_para_el_juego {
 	Lista *posiciones_pokemones_capturados;
 	tablero_t *tablero;
 	movimientos_t *movimientos;
-	booleanos *banderas;
+	banderas_t* banderas;
 	Pila *pokemones_capturados;
 	Lista *grupos_formados;
 	size_t maximo_grupo_formado;

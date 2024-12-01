@@ -18,9 +18,9 @@ const size_t FILAS_INICIAL = 15;
 const size_t COLUMNAS_INICIAL = 32;
 const size_t TIEMPO_INICIAL = 60;
 
-booleanos crear_banderas()
+banderas_t crear_banderas()
 {
-	booleanos banderas = { .menu_seguir = true,
+	banderas_t banderas = { .menu_seguir = true,
 				   .opciones_seguir = false,
 			       .pokedex = NULL,
 			       .colores = NULL,
@@ -51,7 +51,7 @@ bool agregar_opciones_extras(menu_t* opciones_extras)
 
 bool opciones_jugar(void* _banderas)
 {	
-	booleanos* banderas = (booleanos*)_banderas;
+	banderas_t* banderas = (banderas_t*)_banderas;
 	menu_t *opciones_extras = menu_crear();
 	if (!opciones_extras) {
 		printf("No se pudo crear el menú de opciones\n");
@@ -129,7 +129,7 @@ int main()
 		printf("Fallo en la creación de las opciones del menu");
 		return -2;
 	}
-	booleanos banderas = crear_banderas();
+	banderas_t banderas = crear_banderas();
 	char texto[MAX_CARACTERES];
 	while (banderas.menu_seguir) {
 		menu_iterar_opciones(menu, imprimir_opciones, NULL);

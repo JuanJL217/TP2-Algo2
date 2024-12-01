@@ -133,8 +133,4 @@ Como ya entendemos cómo funciona los puntajes, y el último pokemon capturado, 
 - `estructura_jugabilidad`: Se encuentras las estructuras para los pokemones que estarán en el juego, para el jugador y para el juego.  
 - `mostrar_información`: Se tiene las funciones como la impresión del tablero, la impresión de los resultados finales, etc.  
 
-2) Decidí que, cuando el usuario hace varios combos maximos del mismo tamaño, se mostrará no solo el primero que hizo, si no todos los que logró alcanzar, o sea, si el jugador hizo 3 combos de 5 pokemones maximo, entonces se mostrará esos 3 combos en vez de 1.
-
-3) Decidí crear el TDA Movimientos, porque me dás más versatilidad de agregar movimientos, ya que no tengo que añádir tantos ifs para los movimientos del jugador y del el pokemon.
-
-4) 
+2) Cuando el usuario hace varios combos maximos del mismo tamaño, se mostrará no solo el primero que hizo, si no todos los que logró alcanzar, o sea, si el jugador hizo 3 combos de 5 pokemones maximo, entonces se mostrará esos 3 combos en vez de 1.

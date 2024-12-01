@@ -19,7 +19,7 @@
 
 const char CARACTER_USUARIO = '#';
 
-bool cargar_pokedex_y_colores(booleanos* banderas)
+bool cargar_pokedex_y_colores(banderas_t* banderas)
 {
 	if (!banderas->pokedex)
 		banderas->pokedex = pokedex_cargada();
@@ -32,7 +32,7 @@ bool cargar_pokedex_y_colores(booleanos* banderas)
 
 bool mostrar_pokemones(void *_banderas)
 {
-	booleanos *banderas = (booleanos *)_banderas;
+	banderas_t *banderas = (banderas_t *)_banderas;
 	if (!cargar_pokedex_y_colores(banderas))
 		return false;
 	borrar_pantalla();
@@ -235,6 +235,19 @@ void usuario_movimiento(tablero_t* tablero, usuario* usuario, char* tipo_movimie
 			usuario->color);
 }
 
+void direccion_del_usuario(char** direccion_usuario, int entrada)
+{
+	if (entrada == TECLA_DERECHA) {
+		*direccion_usuario  = "E";
+	} else if (entrada == TECLA_IZQUIERDA) {
+		*direccion_usuario  = "O";
+	} else if (entrada == TECLA_ARRIBA) {
+		*direccion_usuario  = "N";
+	} else if (entrada == TECLA_ABAJO) {
+		*direccion_usuario = "S";
+	}
+}
+
 int logica_juego(int entrada, void *_dato)
 {
 	borrar_pantalla();
@@ -244,24 +257,16 @@ int logica_juego(int entrada, void *_dato)
 	size_t x_antes = juego->personaje->x;
 	size_t y_antes = juego->personaje->y;
 
-	if (entrada == TECLA_DERECHA) {
-		juego->personaje->direccion  = "E";
-	} else if (entrada == TECLA_IZQUIERDA) {
-		juego->personaje->direccion  = "O";
-	} else if (entrada == TECLA_ARRIBA) {
-		juego->personaje->direccion  = "N";
-	} else if (entrada == TECLA_ABAJO) {
-		juego->personaje->direccion = "S";
-	}
+	direccion_del_usuario(&juego->personaje->direccion, entrada);
+
 	if (juego->personaje->direccion) {
 		usuario_movimiento(juego->tablero, juego->personaje, juego->personaje->direccion, juego->movimientos, y_antes, x_antes);
 	}
-	printf("xdasdasd\n");
 	lista_iterar_elementos(juego->pokemones_seleccionados,
 			       movimientos_pokemones, (void *)juego);
-	size_t cantidad_eliminados =
+	size_t captidad_capturados =
 		lista_cantidad_elementos(juego->posiciones_pokemones_capturados);
-	for (size_t i = 0; i < cantidad_eliminados; i++) {
+	for (size_t i = 0; i < captidad_capturados; i++) {
 		if (!seleccion_de_pokemon(
 			    juego->banderas->pokedex, juego->banderas->colores,
 			    juego->pokemones_seleccionados, juego->tablero)) {
@@ -302,7 +307,7 @@ void destruir_almacenacimientos_pokemon(Lista *grupos_formados,
 	pila_destruir(pokemones_capturados);
 }
 
-informacion_juego *inicializar_informacion(tablero_t *tablero, booleanos *banderas,
+informacion_juego *inicializar_informacion(tablero_t *tablero, banderas_t *banderas,
 				       usuario *usuario,
 				       movimientos_t *movimientos)
 {
@@ -369,7 +374,7 @@ void destruir_movimientos_y_tablero(tablero_t* tablero, movimientos_t* movimient
 bool jugar_partida(void *_banderas)
 {
 	borrar_pantalla();
-	booleanos *banderas = (booleanos *)_banderas;
+	banderas_t *banderas = (banderas_t *)_banderas;
 	movimientos_t *movimientos = movimientos_cargados();
 	tablero_t *tablero = tablero_crear(banderas->cantidad_filas, banderas->cantidad_columas);
 	if (!tablero || !movimientos || !cargar_pokedex_y_colores(banderas)) {
@@ -400,7 +405,7 @@ bool jugar_partida(void *_banderas)
 
 bool jugar_con_semilla_random(void *_banderas)
 {
-	booleanos *banderas = (booleanos *)_banderas;
+	banderas_t *banderas = (banderas_t *)_banderas;
 	size_t semilla = (size_t)time(NULL);
 	srand((unsigned int)semilla);
 	banderas->semilla = &semilla;
@@ -420,7 +425,7 @@ bool jugar_con_semilla(void *_banderas)
 			seguir = false;
 		}
 	}
-	booleanos *banderas = (booleanos *)_banderas;
+	banderas_t *banderas = (banderas_t *)_banderas;
 	banderas->semilla = &semilla;
 	srand((unsigned int)*banderas->semilla);
 	jugar_partida((void *)banderas);
@@ -431,7 +436,7 @@ bool jugar_con_semilla(void *_banderas)
 
 bool modificar_cantidad_pokemones(void* _banderas)
 {
-	booleanos* banderas = (booleanos*)_banderas;
+	banderas_t* banderas = (banderas_t*)_banderas;
 	char texto[MAX_CARACTERES];
 	bool seguir = true;
 	while (seguir) {
@@ -446,14 +451,14 @@ bool modificar_cantidad_pokemones(void* _banderas)
 
 bool modificar_tiempo(void* _banderas)
 {
-	booleanos* banderas = (booleanos*)_banderas;
+	banderas_t* banderas = (banderas_t*)_banderas;
 	banderas->tiempo_maximo = pedir_numero("Ingrese la duración del juego (solo valor numerico): ");
 	return true;
 }
 
 bool modificar_dimensiones_tablero(void* _banderas)
 {
-	booleanos* banderas = (booleanos*)_banderas;
+	banderas_t* banderas = (banderas_t*)_banderas;
     banderas->cantidad_filas = pedir_numero("Ingrese cantidad de filas (solo valor numérico): ");
     banderas->cantidad_columas = pedir_numero("Ingrese cantidad de columnas (solo valor numérico): ");
 	return true;
@@ -461,7 +466,7 @@ bool modificar_dimensiones_tablero(void* _banderas)
 
 bool volver_al_menu(void* _banderas)
 {	
-	booleanos* banderas = (booleanos*)_banderas;
+	banderas_t* banderas = (banderas_t*)_banderas;
 	banderas->opciones_seguir = false;
 	return true;
 }
@@ -470,7 +475,7 @@ bool volver_al_menu(void* _banderas)
 
 bool restablecer_valores(void *_banderas) 
 {
-	booleanos* banderas = (booleanos*)_banderas;
+	banderas_t* banderas = (banderas_t*)_banderas;
 	banderas->cantidad_objetivos = 7;
 	banderas->cantidad_filas = 15;
 	banderas->cantidad_columas = 32;
@@ -482,6 +487,6 @@ bool restablecer_valores(void *_banderas)
 
 bool salir_del_menu(void *_banderas)
 {
-	(*(booleanos *)_banderas).menu_seguir = false;
+	(*(banderas_t *)_banderas).menu_seguir = false;
 	return true;
 }

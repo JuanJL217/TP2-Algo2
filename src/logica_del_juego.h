@@ -17,7 +17,7 @@ typedef struct booleanos {
 	size_t cantidad_filas;
 	size_t cantidad_columas;
 	size_t tiempo_maximo;
-} booleanos;
+} banderas_t;
 
 /**
  * Muestra a los pokemones en orden alfabetico.
