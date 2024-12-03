@@ -112,8 +112,7 @@ bool mostrar_grupos_maximos(void *_grupo_formado, void *cantidad_maxima)
 void mostrar_resultados(Lista *grupos_formados, size_t maximo_grupo_formado,
 			size_t multiplicador_maximo, size_t puntaje_personaje)
 {
-	printf("%s¡¡¡FIN DEL JUEGO!!!%s\n", ANSI_COLOR_RED,
-	       ANSI_COLOR_RESET);
+	printf("%s¡¡¡FIN DEL JUEGO!!!%s\n", ANSI_COLOR_RED, ANSI_COLOR_RESET);
 	printf("\n");
 	printf("%s        RESULTADOS        %s\n", ANSI_BG_MAGENTA,
 	       ANSI_BG_RESET);

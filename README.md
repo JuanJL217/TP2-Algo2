@@ -15,12 +15,6 @@ Se ejecutará tanto las pruebas como el tp2.c con valgrind.
 
 ---
 
-## Respuestas a las preguntas teóricas
-El informe debe incluir lo siguiente:
-  - Explicación de los TDA creados para el TP
-    - Cada TDA debe tener una definición que explique qué hace y para qué se utiliza. Se debe incluir una explicación de qué datos y    operaciones importantes corresponden al TDA y cuáles son las responsabilidades del mismo.
-  - Explicación de los TDAs reutilizados (de los implementados anteriormente en la materia) y para qué fueron utilizados.
-
 ## Para este TP implementé 4 TDA:
 
 ### TDA Pokedex
