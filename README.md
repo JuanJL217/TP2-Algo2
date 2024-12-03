@@ -34,7 +34,7 @@ Lo utilizó para la opción de `Mostrar pokedex`, el cual debe mostrar en orden 
 - `pokedex_obtener_pokemon`: Esta función utiliza también el recorrido inorden el cual se teniende cuando quiero la posición de un pokemon en la pokedex, ya que, la idea de esta Pokedex es que estén los pokemones en orden alfabetico.
 
 ### TDA Menu
-Consiste en una Lista de opciones que el usuario ingresará con una estructura interna de `indice`, `texto` y una `funcion` a ejecutar para cada nodo. Para este TDA decidí que no habrá una función de busqueda, obtención ni eliminación, ya que el usuario pone los datos desde el comienzo y para fines del tp, es más practico tener funciones que usaré.  
+Consiste en una Lista de opciones que el usuario ingresará un `indice`, `texto` y una `funcion` a ejecutar para cada nodo (la estructura se crea internamente para que sea un tipo de dato unificado). Para este TDA decidí que no habrá una función de busqueda, obtención ni eliminación, ya que el usuario pone los datos desde el comienzo y para fines del tp, es más practico tener funciones que usaré.  
 Mencionar que este TDA tiene la ventaja de tener información entre funciones de cada opción como `banderas`. La idea es la siguiente: Si sé que en la opciones de `Mostrar pokemones` y `Jugar` con o sin semilla, necesito la Pokedex, entonces, si creo la Pokedex cuando quiero mostrar los Pokemones, esa información me la guardo para cuando quiera jugar, entonces no tengo que crear una nueva Pokedex con los mismos pokemones, si no que simplemente si ya lo creé en otra función, reutilizarlo.
 
 - `menu_crear`: Crea una Lista para guardar cada opcion, la estructura de la opcion se crea internamente.  
@@ -44,7 +44,7 @@ Mencionar que este TDA tiene la ventaja de tener información entre funciones de
 - `menu_ejecutar_opcion`: Dado un indice, se ejecuta la opción. Se puede tener varias opciones con el mismo indice, pero solo el primero que se agrega es el que se podrá ejecutar.
 
 ### TDA Tablero
-Es la representación de una matriz, hecho un tablero. Se utiliza para la lógica de la ubicación del jugador y pokemones en un tablero. Así como de obtener información. Mencionar que no implementé una función para eliminar un elemento de alguna posicion, por efectos del tp.
+Es la representación de una matriz, hecho un tablero. Se utiliza para la lógica de la ubicación del jugador y pokemones en un tablero. Así como de obtener información. Mencionar que no implementé una función para eliminar un elemento de alguna posicion, por efectos del tp, ya que, así como el usuario captura pokemones, debo rellenar esos pokemones capturados, en el tablero para que siempre haya la misma cantidad de pokemones.
 
 - `tablero_crear`: Se crea una matriz dado una cantidad de filas y columnas que el usuario decida darle. Cada posicion de la tablero tendrá una estructura que será un caracter y el color asociado al caracter.
 - `tablero_colocar_elemento`: Se coloca el caracter y color (por defecto es blanco), en la posición que se desee.
@@ -53,7 +53,7 @@ Es la representación de una matriz, hecho un tablero. Se utiliza para la lógic
 - `tablero_posicion_informacion`: Se obtiene el caracter y color pasado por punteros.
 
 ### TDA Movimientos:
-Aquí, no supe si tenerlo como un TDA o no, pero dado que, como en el Tablero hace acciones como mover un elemento, en este TDA Movimiento almaceno funciones que, dado una clave, se ejecute una acción, casi parecido como un TDA Menu, con la diferencia que solo puede haber una clave, y esa clave tendrá la función a ejecutar, no puede haber otra función con la misma clave. Si bien pude haber hecho una función con muchos if, creo que una manera más elegante es almacenando todas logicas en un hash.  
+Aquí, no supe si tenerlo como un TDA o no, pero dado que, como en el Tablero hace acciones como mover un elemento, en este TDA Movimiento almaceno funciones que, dado una clave, se ejecute una acción, casi parecido como un TDA Menu, con la diferencia que solo puede haber una clave, y esa clave tendrá la función a ejecutar, no puede haber otra función con la misma clave. Si bien pude haber hecho una función con muchos if, creo que una manera más elegante es almacenando todas logicas en un TDA Movimientos.
 Este TDA lo utilizo para realizar los movimientos de cada pokemones y también las del usuario.
 
 - `movimientos_crear`: Crea un hash para gaurdar el nombre del movimiento (clave) y una función asociada (valor).
@@ -61,7 +61,6 @@ Este TDA lo utilizo para realizar los movimientos de cada pokemones y también l
 - `movimiento_realizar`: Ejecuta la función de movimiento a realizar.
 
 ---
-##  El Menu
 
 ### Menus  
 Mientras voy explicando como se desarrolla la lógica del juego, primero mencionar el uso del TDA Menu, que es donde inserto las 4 opciones fundamentales para el TP, el cual decidí agregarle 2 funciones extras, que son: `Otras opciones` y `Reestablecer valores predeterminados`.  
@@ -85,6 +84,12 @@ booleanos banderas = { .menu_seguir = true,
 
 
 ## Logica del Juego  
+
+La lógica del tp2,c lo añadí en .c y .h extras para que no todo esté mezclado. Muy aparte de los TDA, tengo:  
+- `logica_del_juego`: Aquí se almacena toda la lóigca del juego.  
+- `cargar_elementos`: Es donde inicializo y cargo los colores y la Pokedex, al igual que los Movimientos.  
+- `estructura_jugabilidad`: Se encuentras las estructuras internas para los pokemones que estarán en el juego, para el jugador y para el juego.  
+- `mostrar_información`: Se tiene las funciones como la impresión del tablero, la impresión de los resultados finales, etc.  
 
 ### Selección de pokemones
 Para poder obtener los pokemones que estarán en el tablero, vamos usar la función `pokedex_obtener_pokemon` y la posición que obtengemos será aleatoria, por eso, vamos a usar `rand` que va desde el 0 hasta la cantidad de pokemones que hay en la Pokedex. Los pokemones que se obtengan, se les copiará la información a un nuevo tipo de dato el cual es `pokemon_seleccionado`, el cual obtiene referencia a `x` e `y`, que es donde se encontrará en el tablero, y ese pokemones que se seleccionó, se lo guardará en una `Lista`, insertando al final cada nuevo pokemon seleccionado.
@@ -127,10 +132,4 @@ Como ya entendemos cómo funciona los puntajes, y el último pokemon capturado, 
 <img width="70%" src="img/grupos_formados.png">
 </div>
 
-## Deciciones para la ejecución del TP:
-1) Añadí .c y .h extras para que no todo esté mezclado. Muy aparte de los TDA, tengo:  
-- `cargar_elementos`: Es donde inicializo y cargo los colores y la Pokedex, al igual que los Movimientos.  
-- `estructura_jugabilidad`: Se encuentras las estructuras para los pokemones que estarán en el juego, para el jugador y para el juego.  
-- `mostrar_información`: Se tiene las funciones como la impresión del tablero, la impresión de los resultados finales, etc.  
-
-2) Cuando el usuario hace varios combos maximos del mismo tamaño, se mostrará no solo el primero que hizo, si no todos los que logró alcanzar, o sea, si el jugador hizo 3 combos de 5 pokemones maximo, entonces se mostrará esos 3 combos en vez de 1.
+Cuando el usuario hace varios combos maximos del mismo tamaño, se mostrará no solo el primero que hizo, si no todos los que logró alcanzar, o sea, si el jugador hizo 3 combos de 5 pokemones maximo, entonces se mostrará esos 3 combos en vez de solo el primero o el último que hizo.

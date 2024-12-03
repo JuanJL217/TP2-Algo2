@@ -43,7 +43,7 @@ bool menu_ingresar_opcion(menu_t *menu, char indice, char *texto,
 }
 
 size_t menu_cantidad(menu_t *menu)
-{	
+{
 	return lista_cantidad_elementos(menu);
 }
 
@@ -54,10 +54,11 @@ size_t menu_iterar_opciones(menu_t *menu,
 }
 
 bool menu_ejecutar_opcion(menu_t *menu, char indice, void *ctx)
-{	
+{
 	if (!menu)
 		return false;
-	opcion_menu_t *opcion = lista_buscar_elemento(menu, (void *)&indice, buscar_indice);
+	opcion_menu_t *opcion =
+		lista_buscar_elemento(menu, (void *)&indice, buscar_indice);
 	if (!opcion || !opcion->accion)
 		return false;
 	return opcion->accion(ctx);

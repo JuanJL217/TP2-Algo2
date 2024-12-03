@@ -16,8 +16,7 @@ struct archivo_csv {
 bool redimencionar_vector_texto(char **texto, size_t *capacidad)
 {
 	*capacidad *= FACTOR_CRECIMIENTO_LINEA;
-	char *nuevo_bloque_texto =
-		realloc(*texto, (*capacidad) * sizeof(char));
+	char *nuevo_bloque_texto = realloc(*texto, (*capacidad) * sizeof(char));
 	if (!nuevo_bloque_texto) {
 		return false;
 	}
@@ -34,7 +33,7 @@ bool esta_llegando_al_tope_del_vector_texto(size_t tamaño_texto,
 // -------- FUNCIONES PRINCIPALES --------
 
 struct archivo_csv *abrir_archivo_csv(const char *nombre_archivo,
-				      char separador) 
+				      char separador)
 {
 	struct archivo_csv *inicializar_archivo =
 		malloc(sizeof(struct archivo_csv));
@@ -54,8 +53,7 @@ struct archivo_csv *abrir_archivo_csv(const char *nombre_archivo,
 }
 
 size_t leer_linea_csv(struct archivo_csv *archivo, size_t columnas,
-		      bool (*funciones[])(const char *, void *),
-		      void *ctx[])
+		      bool (*funciones[])(const char *, void *), void *ctx[])
 {
 	if (!archivo || !archivo->archivo || !funciones || !ctx) {
 		return 0;
@@ -74,9 +72,7 @@ size_t leer_linea_csv(struct archivo_csv *archivo, size_t columnas,
 	while (codigo != EOF && codigo != '\n') {
 		if (esta_llegando_al_tope_del_vector_texto(tamaño_del_texto,
 							   capacidad_linea) &&
-		    !redimencionar_vector_texto(
-			    &texto,
-			    &capacidad_linea)) {
+		    !redimencionar_vector_texto(&texto, &capacidad_linea)) {
 			free(texto);
 			return columna_posicion;
 		}
@@ -92,8 +88,7 @@ size_t leer_linea_csv(struct archivo_csv *archivo, size_t columnas,
 		return columna_posicion;
 	}
 
-	struct Partes *partes =
-		dividir_string(texto, archivo->separador);
+	struct Partes *partes = dividir_string(texto, archivo->separador);
 	free(texto);
 
 	if (!partes || partes->cantidad == 0 || partes->cantidad < columnas) {
@@ -109,7 +104,7 @@ size_t leer_linea_csv(struct archivo_csv *archivo, size_t columnas,
 
 		if (!funciones[columna_posicion](
 			    partes->string[columna_posicion],
-			    ctx[columna_posicion])) { 
+			    ctx[columna_posicion])) {
 			liberar_partes(partes);
 			return columna_posicion + 1;
 		}

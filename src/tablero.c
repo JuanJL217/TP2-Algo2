@@ -21,7 +21,7 @@ tablero_t *tablero_crear(size_t filas, size_t columnas)
 	tablero_t *tablero = calloc(1, sizeof(tablero_t));
 	if (!tablero)
 		return NULL;
-	
+
 	if (filas < 10) {
 		tablero->filas = 10;
 	} else {
@@ -65,8 +65,7 @@ tablero_t *tablero_crear(size_t filas, size_t columnas)
 bool tablero_colocar_elemento(tablero_t *tablero, size_t fila, size_t columna,
 			      char elemento, char *color)
 {
-	if (!tablero || fila >= tablero->filas ||
-	    columna >= tablero->columnas)
+	if (!tablero || fila >= tablero->filas || columna >= tablero->columnas)
 		return false;
 	if (!color)
 		color = ANSI_COLOR_WHITE;
@@ -85,12 +84,14 @@ size_t tablero_cantidad_columnas(tablero_t *tablero)
 	return !tablero ? 0 : tablero->columnas;
 }
 
-bool tablero_posicion_esta_vacio(tablero_t* tablero, size_t fila, size_t columna)
+bool tablero_posicion_esta_vacio(tablero_t *tablero, size_t fila,
+				 size_t columna)
 {
-	if (!tablero || fila >= tablero->filas ||
-	    columna >= tablero->columnas)
+	if (!tablero || fila >= tablero->filas || columna >= tablero->columnas)
 		return false;
-	if (tablero->tabla[fila][columna].elemento != ESPACIO_VACIO && strcmp(tablero->tabla[fila][columna].color, ANSI_COLOR_BLACK) != 0) {
+	if (tablero->tabla[fila][columna].elemento != ESPACIO_VACIO &&
+	    strcmp(tablero->tabla[fila][columna].color, ANSI_COLOR_BLACK) !=
+		    0) {
 		return false;
 	}
 	return true;
@@ -106,9 +107,9 @@ bool tablero_mover_elemento(tablero_t *tablero, size_t f_origen,
 	if (f_origen >= tablero->filas || c_origen >= tablero->columnas ||
 	    f_destino >= tablero->filas || c_destino >= tablero->columnas)
 		return false;
-	
+
 	if (!color)
-	color = ANSI_COLOR_WHITE;
+		color = ANSI_COLOR_WHITE;
 
 	tablero->tabla[f_origen][c_origen].elemento = ESPACIO_VACIO;
 	tablero->tabla[f_origen][c_origen].color = ANSI_COLOR_BLACK;
@@ -117,10 +118,10 @@ bool tablero_mover_elemento(tablero_t *tablero, size_t f_origen,
 	return true;
 }
 
-bool tablero_posicion_informacion(tablero_t* tablero, size_t fila, size_t columna, char* caracter, char** color)
+bool tablero_posicion_informacion(tablero_t *tablero, size_t fila,
+				  size_t columna, char *caracter, char **color)
 {
-	if (!tablero || fila >= tablero->filas ||
-	    columna >= tablero->columnas)
+	if (!tablero || fila >= tablero->filas || columna >= tablero->columnas)
 		return false;
 	*caracter = tablero->tabla[fila][columna].elemento;
 	*color = tablero->tabla[fila][columna].color;

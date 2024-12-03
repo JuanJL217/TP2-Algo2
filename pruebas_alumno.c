@@ -409,41 +409,46 @@ void prueba_tablero_null()
 		"Pasar tablero NULL retorna false conocer la informacion de alguna posicion");
 }
 
-bool sumar_los_puntajes(pokemon_t* pokemon, void* contador_puntajes)
-{	
-	*(int*)contador_puntajes += pokemon->puntaje;
+bool sumar_los_puntajes(pokemon_t *pokemon, void *contador_puntajes)
+{
+	*(int *)contador_puntajes += pokemon->puntaje;
 	return true;
 }
 
 void prueba_pokedex_crear()
 {
-	pokedex_t* pokedex = pokedex_crear();
+	pokedex_t *pokedex = pokedex_crear();
 	if (!pokedex) {
 		printf("No se pudo crear la pokedex");
 		return;
 	}
-	size_t puntaje_total = 0 ;
+	size_t puntaje_total = 0;
 	pa2m_afirmar(pokedex != NULL, "Se creó una pokedex");
-	pa2m_afirmar(pokedex_cantidad(pokedex) == 0, "Pokedex creada no tiene pokemones almacenados, retorna 0");
-	pa2m_afirmar(pokedex_iterar(pokedex, sumar_los_puntajes, (void*)&puntaje_total) == 0, "Pokedex creada no se puede iterar, retorna 0");
-	pa2m_afirmar(pokedex_obtener_pokemon(pokedex, 0) == NULL, "Pokedex creada, obtener un pokemon retorna NULL");
+	pa2m_afirmar(
+		pokedex_cantidad(pokedex) == 0,
+		"Pokedex creada no tiene pokemones almacenados, retorna 0");
+	pa2m_afirmar(pokedex_iterar(pokedex, sumar_los_puntajes,
+				    (void *)&puntaje_total) == 0,
+		     "Pokedex creada no se puede iterar, retorna 0");
+	pa2m_afirmar(pokedex_obtener_pokemon(pokedex, 0) == NULL,
+		     "Pokedex creada, obtener un pokemon retorna NULL");
 	pokedex_destruir(pokedex);
 }
 
-void liberar_pokemones(pokemon_t* pokemon)
+void liberar_pokemones(pokemon_t *pokemon)
 {
 	free(pokemon);
 }
 
 void prueba_pokedex_insertar()
 {
-	pokedex_t* pokedex = pokedex_crear();
+	pokedex_t *pokedex = pokedex_crear();
 	if (!pokedex) {
 		printf("No se pudo crear la pokedex");
 		return;
 	}
 	pa2m_afirmar(pokedex != NULL, "Se creó una pokedex");
-	pokemon_t* pokemon = calloc(1, sizeof(pokemon_t));
+	pokemon_t *pokemon = calloc(1, sizeof(pokemon_t));
 	if (!pokemon) {
 		printf("No se pudo asignar memoria dinamica para el pokemon");
 		pokedex_destruir_todo(pokedex, liberar_pokemones);
@@ -458,29 +463,57 @@ void prueba_pokedex_insertar()
 		printf("No se pudo ingresar el pokemon a la pokedex");
 		pokedex_destruir_todo(pokedex, liberar_pokemones);
 	}
-	pa2m_afirmar(pokedex_cantidad(pokedex) == 1, "Se ingresó un pokemon a la pokedex");
-	pa2m_afirmar(pokedex_obtener_pokemon(pokedex, 1) == NULL, "Obtener un pokemon en una posicion mayor o igual a la cantidad que hay en la pokedex, retorna NULL");
-	pokemon_t* pokemon_obtenido = pokedex_obtener_pokemon(pokedex, 0);
-	pa2m_afirmar(pokemon_obtenido == pokemon, "Se obtuve el pokemon en la posicion 0 (unico pokemon existente). Dirección obtenida: '%li' -> Dirección esperada: '%li'", pokemon_obtenido, pokemon);
+	pa2m_afirmar(pokedex_cantidad(pokedex) == 1,
+		     "Se ingresó un pokemon a la pokedex");
+	pa2m_afirmar(
+		pokedex_obtener_pokemon(pokedex, 1) == NULL,
+		"Obtener un pokemon en una posicion mayor o igual a la cantidad que hay en la pokedex, retorna NULL");
+	pokemon_t *pokemon_obtenido = pokedex_obtener_pokemon(pokedex, 0);
+	pa2m_afirmar(
+		pokemon_obtenido == pokemon,
+		"Se obtuve el pokemon en la posicion 0 (unico pokemon existente). Dirección obtenida: '%li' -> Dirección esperada: '%li'",
+		pokemon_obtenido, pokemon);
 	pokedex_destruir_todo(pokedex, liberar_pokemones);
 }
 
 void prueba_pokedex_insertar_mas_pokemones()
 {
-	pokedex_t* pokedex = pokedex_crear();
+	pokedex_t *pokedex = pokedex_crear();
 	if (!pokedex) {
 		printf("No se pudo crear la pokedex");
 		return;
 	}
 	pa2m_afirmar(pokedex != NULL, "Se creó una pokedex");
-	pokemon_t pokemon1 = {.nombre = "Pikachu", .movimientos = "IZQUIERDA", .color = "rojo", .puntaje = 100};
-	pokemon_t pokemon2 = {.nombre = "Elmo", .movimientos = "DERECHA", .color = "azul", .puntaje = 123};
-	pokemon_t pokemon3 = {.nombre = "Raichú", .movimientos = "ARRIBA", .color = "verde", .puntaje = -2};
-	pokemon_t pokemon4 = {.nombre = "Pocoyó", .movimientos = "ABAJO", .color = "amarillo", .puntaje = -10};
-	pokemon_t pokemon5 = {.nombre = "Snorlax", .movimientos = "MOVIMIENTO", .color = "marrón", .puntaje = 50};
-	pokemon_t pokemon6 = {.nombre = "Drake", .movimientos = "SENSUAL", .color = "celeste", .puntaje = 80};
-	pokemon_t pokemon7 = {.nombre = "Josh", .movimientos = "WIIIIIIII", .color = "purpura", .puntaje = -230};
-	pokemon_t* pokemones[7] = {&pokemon1, &pokemon2, &pokemon3, &pokemon4, &pokemon5, &pokemon6, &pokemon7};
+	pokemon_t pokemon1 = { .nombre = "Pikachu",
+			       .movimientos = "IZQUIERDA",
+			       .color = "rojo",
+			       .puntaje = 100 };
+	pokemon_t pokemon2 = { .nombre = "Elmo",
+			       .movimientos = "DERECHA",
+			       .color = "azul",
+			       .puntaje = 123 };
+	pokemon_t pokemon3 = { .nombre = "Raichú",
+			       .movimientos = "ARRIBA",
+			       .color = "verde",
+			       .puntaje = -2 };
+	pokemon_t pokemon4 = { .nombre = "Pocoyó",
+			       .movimientos = "ABAJO",
+			       .color = "amarillo",
+			       .puntaje = -10 };
+	pokemon_t pokemon5 = { .nombre = "Snorlax",
+			       .movimientos = "MOVIMIENTO",
+			       .color = "marrón",
+			       .puntaje = 50 };
+	pokemon_t pokemon6 = { .nombre = "Drake",
+			       .movimientos = "SENSUAL",
+			       .color = "celeste",
+			       .puntaje = 80 };
+	pokemon_t pokemon7 = { .nombre = "Josh",
+			       .movimientos = "WIIIIIIII",
+			       .color = "purpura",
+			       .puntaje = -230 };
+	pokemon_t *pokemones[7] = { &pokemon1, &pokemon2, &pokemon3, &pokemon4,
+				    &pokemon5, &pokemon6, &pokemon7 };
 
 	for (size_t i = 0; i < 7; i++) {
 		if (!pokedex_insertar_pokemon(pokedex, pokemones[i])) {
@@ -489,34 +522,63 @@ void prueba_pokedex_insertar_mas_pokemones()
 		}
 	}
 
-	pa2m_afirmar(pokedex_cantidad(pokedex) == 7, "Hay 7 pokemones en la pokedex");
+	pa2m_afirmar(pokedex_cantidad(pokedex) == 7,
+		     "Hay 7 pokemones en la pokedex");
 
 	for (size_t i = 0; i < 7; i++) {
-		pokemon_t* pokemon_obtenido = pokedex_obtener_pokemon(pokedex, i);
-		pa2m_afirmar(true == true, "Se obtuvo al pokemon '%s' en la posicion %li", (*pokemon_obtenido).nombre, i);
+		pokemon_t *pokemon_obtenido =
+			pokedex_obtener_pokemon(pokedex, i);
+		pa2m_afirmar(true == true,
+			     "Se obtuvo al pokemon '%s' en la posicion %li",
+			     (*pokemon_obtenido).nombre, i);
 	}
-	
-	pokemon_t* pokemon_obtenido = pokedex_obtener_pokemon(pokedex, 4);
-	pa2m_afirmar(pokemon_obtenido == &pokemon4, "Pokemon en la posicion 4. Dirección obtenida: '%li', direccion esperada: %li", pokemon_obtenido, &pokemon4);
+
+	pokemon_t *pokemon_obtenido = pokedex_obtener_pokemon(pokedex, 4);
+	pa2m_afirmar(
+		pokemon_obtenido == &pokemon4,
+		"Pokemon en la posicion 4. Dirección obtenida: '%li', direccion esperada: %li",
+		pokemon_obtenido, &pokemon4);
 	pokedex_destruir(pokedex);
 }
 
 void prueba_iterar_pokedex()
 {
-	pokedex_t* pokedex = pokedex_crear();
+	pokedex_t *pokedex = pokedex_crear();
 	if (!pokedex) {
 		printf("No se pudo crear la pokedex");
 		return;
 	}
 	pa2m_afirmar(pokedex != NULL, "Se creó una pokedex");
-	pokemon_t pokemon1 = {.nombre = "Pikachu", .movimientos = "IZQUIERDA", .color = "rojo", .puntaje = 100};
-	pokemon_t pokemon2 = {.nombre = "Elmo", .movimientos = "DERECHA", .color = "azul", .puntaje = 123};
-	pokemon_t pokemon3 = {.nombre = "Raichú", .movimientos = "ARRIBA", .color = "verde", .puntaje = -2};
-	pokemon_t pokemon4 = {.nombre = "Pocoyó", .movimientos = "ABAJO", .color = "amarillo", .puntaje = -10};
-	pokemon_t pokemon5 = {.nombre = "Snorlax", .movimientos = "MOVIMIENTO", .color = "marrón", .puntaje = 50};
-	pokemon_t pokemon6 = {.nombre = "Drake", .movimientos = "SENSUAL", .color = "celeste", .puntaje = 80};
-	pokemon_t pokemon7 = {.nombre = "Josh", .movimientos = "WIIIIIIII", .color = "purpura", .puntaje = -230};
-	pokemon_t* pokemones[7] = {&pokemon1, &pokemon2, &pokemon3, &pokemon4, &pokemon5, &pokemon6, &pokemon7};
+	pokemon_t pokemon1 = { .nombre = "Pikachu",
+			       .movimientos = "IZQUIERDA",
+			       .color = "rojo",
+			       .puntaje = 100 };
+	pokemon_t pokemon2 = { .nombre = "Elmo",
+			       .movimientos = "DERECHA",
+			       .color = "azul",
+			       .puntaje = 123 };
+	pokemon_t pokemon3 = { .nombre = "Raichú",
+			       .movimientos = "ARRIBA",
+			       .color = "verde",
+			       .puntaje = -2 };
+	pokemon_t pokemon4 = { .nombre = "Pocoyó",
+			       .movimientos = "ABAJO",
+			       .color = "amarillo",
+			       .puntaje = -10 };
+	pokemon_t pokemon5 = { .nombre = "Snorlax",
+			       .movimientos = "MOVIMIENTO",
+			       .color = "marrón",
+			       .puntaje = 50 };
+	pokemon_t pokemon6 = { .nombre = "Drake",
+			       .movimientos = "SENSUAL",
+			       .color = "celeste",
+			       .puntaje = 80 };
+	pokemon_t pokemon7 = { .nombre = "Josh",
+			       .movimientos = "WIIIIIIII",
+			       .color = "purpura",
+			       .puntaje = -230 };
+	pokemon_t *pokemones[7] = { &pokemon1, &pokemon2, &pokemon3, &pokemon4,
+				    &pokemon5, &pokemon6, &pokemon7 };
 
 	for (size_t i = 0; i < 7; i++) {
 		if (!pokedex_insertar_pokemon(pokedex, pokemones[i])) {
@@ -526,22 +588,37 @@ void prueba_iterar_pokedex()
 	}
 	int contador = 0;
 	int resultado_esperado = 111;
-	pa2m_afirmar(pokedex_iterar(pokedex, NULL, &contador) == 0, "Pasar NULL en la función de iterador, retorna 0 la cantidad de iteraciones");
-	size_t iterados = pokedex_iterar(pokedex, sumar_los_puntajes, &contador);
-	pa2m_afirmar(iterados == pokedex_cantidad(pokedex), "Se iteró todos los pokemones");
-	pa2m_afirmar(contador == resultado_esperado, "Se iteró y se hizo la operación esperada");
+	pa2m_afirmar(
+		pokedex_iterar(pokedex, NULL, &contador) == 0,
+		"Pasar NULL en la función de iterador, retorna 0 la cantidad de iteraciones");
+	size_t iterados =
+		pokedex_iterar(pokedex, sumar_los_puntajes, &contador);
+	pa2m_afirmar(iterados == pokedex_cantidad(pokedex),
+		     "Se iteró todos los pokemones");
+	pa2m_afirmar(contador == resultado_esperado,
+		     "Se iteró y se hizo la operación esperada");
 	pokedex_destruir(pokedex);
 }
 
 void prueba_pokedex_null()
 {
-	pokedex_t* pokedex = NULL;
-	pokemon_t pokemon = {.nombre = "Pikachu", .movimientos = "IZQUIERDA", .color = "rojo", .puntaje = 100};
+	pokedex_t *pokedex = NULL;
+	pokemon_t pokemon = { .nombre = "Pikachu",
+			      .movimientos = "IZQUIERDA",
+			      .color = "rojo",
+			      .puntaje = 100 };
 	int contador = 0;
-	pa2m_afirmar(pokedex_insertar_pokemon(pokedex, &pokemon) == false, "Pasar pokedex NULL retorna false el insertar un pokemon");
-	pa2m_afirmar(pokedex_cantidad(pokedex) == 0, "Pasar pokedex NULL retorna 0 en la cantidad de pokemones");
-	pa2m_afirmar(pokedex_obtener_pokemon(pokedex, 0) == NULL, "Pasar pokedex NULL retorna NULL el obtener pokemon en cualquier posicion");
-	pa2m_afirmar(pokedex_iterar(pokedex, sumar_los_puntajes, &contador) == 0, "Pasar pokedex NULL retorna 0 iterar la pokedex");	
+	pa2m_afirmar(pokedex_insertar_pokemon(pokedex, &pokemon) == false,
+		     "Pasar pokedex NULL retorna false el insertar un pokemon");
+	pa2m_afirmar(
+		pokedex_cantidad(pokedex) == 0,
+		"Pasar pokedex NULL retorna 0 en la cantidad de pokemones");
+	pa2m_afirmar(
+		pokedex_obtener_pokemon(pokedex, 0) == NULL,
+		"Pasar pokedex NULL retorna NULL el obtener pokemon en cualquier posicion");
+	pa2m_afirmar(pokedex_iterar(pokedex, sumar_los_puntajes, &contador) ==
+			     0,
+		     "Pasar pokedex NULL retorna 0 iterar la pokedex");
 }
 
 int main()

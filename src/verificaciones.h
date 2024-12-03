@@ -7,10 +7,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-bool es_caracter(char* texto);
+bool es_caracter(char *texto);
 
-bool es_numero(char* texto);
+bool es_numero(char *texto);
 
-char caracter_mayuscula(char* texto);
+char caracter_mayuscula(char *texto);
 
 #endif //VERIFICACIONES_H

@@ -26,7 +26,8 @@ nodo_lista *nodo_crear_en_lista(void *cosa)
 	return nodo;
 }
 
-nodo_lista *buscar_nodo_en_lista(nodo_lista *nodo_actual, size_t posicion, size_t ajuste)
+nodo_lista *buscar_nodo_en_lista(nodo_lista *nodo_actual, size_t posicion,
+				 size_t ajuste)
 {
 	for (size_t i = 0; i < posicion - ajuste; i++)
 		nodo_actual = nodo_actual->siguiente;
@@ -140,8 +141,8 @@ bool lista_quitar_elemento(Lista *lista, size_t posicion,
 		if (lista->cantidad_elementos == 1)
 			lista->ultimo_nodo = NULL;
 	} else {
-		nodo_anterior = buscar_nodo_en_lista(lista->primer_nodo, posicion,
-					    UNA_POSICION_ANTES);
+		nodo_anterior = buscar_nodo_en_lista(
+			lista->primer_nodo, posicion, UNA_POSICION_ANTES);
 		if (posicion == posicion_ultimo_nodo(lista)) {
 			nodo_encontrado = lista->ultimo_nodo;
 			lista->ultimo_nodo = nodo_anterior;

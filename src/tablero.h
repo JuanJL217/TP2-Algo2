@@ -30,7 +30,8 @@ bool tablero_colocar_elemento(tablero_t *tablero, size_t fila, size_t columna,
  * Verifica si en dicha posicion esta vacio (' ' y negro).
  * Si se pasa una posicion por fuera del rango, retorna false
  */
-bool tablero_posicion_esta_vacio(tablero_t* tablero, size_t fila, size_t columna);
+bool tablero_posicion_esta_vacio(tablero_t *tablero, size_t fila,
+				 size_t columna);
 
 /**
  * Devuelve la cantidad de filas
@@ -59,8 +60,8 @@ bool tablero_mover_elemento(tablero_t *tablero, size_t f_origen,
  * Pasar una posicion por fuera del rango, un caracter NULL y
  * un color NULL, retorna false
  */
-bool tablero_posicion_informacion(tablero_t* tablero, size_t fila, size_t columna, char* caracter, char** color);
-
+bool tablero_posicion_informacion(tablero_t *tablero, size_t fila,
+				  size_t columna, char *caracter, char **color);
 
 /**
  *Libera toda la memoria del tablero

@@ -35,8 +35,8 @@ bool menu_ingresar_opcion(menu_t *menu, char indice, char *texto,
 /**
  * Se itera las opciones en orden de insersion
  */
-size_t menu_iterar_opciones(menu_t *menu,
-			    bool (*funcion)(void *, void *), void *ctx);
+size_t menu_iterar_opciones(menu_t *menu, bool (*funcion)(void *, void *),
+			    void *ctx);
 
 /**
  * Retorna la cantidad de opciones en el menu.

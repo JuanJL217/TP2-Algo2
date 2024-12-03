@@ -21,26 +21,32 @@ const size_t TIEMPO_INICIAL = 60;
 banderas_t crear_banderas()
 {
 	banderas_t banderas = { .menu_seguir = true,
-				   .opciones_seguir = false,
-			       .pokedex = NULL,
-			       .colores = NULL,
-				   .semilla = NULL,
-				   .cantidad_objetivos = CANTIDAD_OBJETIVOS_INICIAL,
-				   .cantidad_filas = FILAS_INICIAL,
-				   .cantidad_columas = COLUMNAS_INICIAL,
-				   .tiempo_maximo = TIEMPO_INICIAL};
+				.opciones_seguir = false,
+				.pokedex = NULL,
+				.colores = NULL,
+				.semilla = NULL,
+				.cantidad_objetivos =
+					CANTIDAD_OBJETIVOS_INICIAL,
+				.cantidad_filas = FILAS_INICIAL,
+				.cantidad_columas = COLUMNAS_INICIAL,
+				.tiempo_maximo = TIEMPO_INICIAL };
 	return banderas;
 }
 
-
 // ---------------- OPCIONES EXTRAS --------------------
 
-bool agregar_opciones_extras(menu_t* opciones_extras)
+bool agregar_opciones_extras(menu_t *opciones_extras)
 {
-	menu_ingresar_opcion(opciones_extras, 'M', "Modificar cantidad de Pokemones en Juego", modificar_cantidad_pokemones);
-	menu_ingresar_opcion(opciones_extras, 'T', "Modifcar Tiempo", modificar_tiempo);
-	menu_ingresar_opcion(opciones_extras, 'F', "Modificar cantidad Filas y Columnas", modificar_dimensiones_tablero);
-	menu_ingresar_opcion(opciones_extras, 'V', "Volver al menu", volver_al_menu);
+	menu_ingresar_opcion(opciones_extras, 'M',
+			     "Modificar cantidad de Pokemones en Juego",
+			     modificar_cantidad_pokemones);
+	menu_ingresar_opcion(opciones_extras, 'T', "Modifcar Tiempo",
+			     modificar_tiempo);
+	menu_ingresar_opcion(opciones_extras, 'F',
+			     "Modificar cantidad Filas y Columnas",
+			     modificar_dimensiones_tablero);
+	menu_ingresar_opcion(opciones_extras, 'V', "Volver al menu",
+			     volver_al_menu);
 
 	if (menu_cantidad(opciones_extras) != CANTIDAD_OPCIONES_EXTRAS) {
 		menu_destruir(opciones_extras);
@@ -49,9 +55,9 @@ bool agregar_opciones_extras(menu_t* opciones_extras)
 	return true;
 }
 
-bool opciones_jugar(void* _banderas)
-{	
-	banderas_t* banderas = (banderas_t*)_banderas;
+bool opciones_jugar(void *_banderas)
+{
+	banderas_t *banderas = (banderas_t *)_banderas;
 	menu_t *opciones_extras = menu_crear();
 	if (!opciones_extras) {
 		printf("No se pudo crear el menú de opciones\n");
@@ -83,13 +89,15 @@ bool opciones_jugar(void* _banderas)
 // ---------------- OPCIONES PRINCIPALES --------------------
 
 bool agregar_opciones_al_menu(menu_t *menu)
-{	
+{
 	menu_ingresar_opcion(menu, 'P', "Mostrar pokedex", mostrar_pokemones);
-	menu_ingresar_opcion(menu, 'J', "Iniciar juego", jugar_con_semilla_random);
+	menu_ingresar_opcion(menu, 'J', "Iniciar juego",
+			     jugar_con_semilla_random);
 	menu_ingresar_opcion(menu, 'S', "Iniciar juego con semilla",
-			     jugar_con_semilla);
+			     jugar_con_semilla_personalizada);
 	menu_ingresar_opcion(menu, 'O', "Otras opciones", opciones_jugar);
-	menu_ingresar_opcion(menu, 'R', "Restablecer valores predeterminados", restablecer_valores);
+	menu_ingresar_opcion(menu, 'R', "Restablecer valores predeterminados",
+			     restablecer_valores);
 	menu_ingresar_opcion(menu, 'Q', "Salir", salir_del_menu);
 
 	if (menu_cantidad(menu) != CANTIDAD_OPCIONES_MENU_PRINCIPAL) {
@@ -99,7 +107,7 @@ bool agregar_opciones_al_menu(menu_t *menu)
 	return true;
 }
 
-void destruir_pokemones(pokemon_t* pokemon)
+void destruir_pokemones(pokemon_t *pokemon)
 {
 	free(pokemon->nombre);
 	free(pokemon->color);

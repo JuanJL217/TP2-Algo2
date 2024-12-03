@@ -13,10 +13,10 @@ typedef struct pokemon_posicion {
 	size_t llegar;
 } pokemon_ubicacion;
 
-int comparar_nombres_pokemon(void* _poke1, void* _poke2)
+int comparar_nombres_pokemon(void *_poke1, void *_poke2)
 {
-	pokemon_t* pokemon1 = (pokemon_t*)_poke1;
-	pokemon_t* pokemon2 = (pokemon_t*)_poke2;
+	pokemon_t *pokemon1 = (pokemon_t *)_poke1;
+	pokemon_t *pokemon2 = (pokemon_t *)_poke2;
 	return strcmp(pokemon1->nombre, pokemon2->nombre);
 }
 
@@ -25,9 +25,9 @@ pokedex_t *pokedex_crear()
 	return abb_crear(comparar_nombres_pokemon);
 }
 
-bool pokedex_insertar_pokemon(pokedex_t* pokedex, pokemon_t* pokemon)
+bool pokedex_insertar_pokemon(pokedex_t *pokedex, pokemon_t *pokemon)
 {
-	return abb_insertar(pokedex, (void*)pokemon);
+	return abb_insertar(pokedex, (void *)pokemon);
 }
 
 size_t pokedex_cantidad(pokedex_t *pokedex)
@@ -38,7 +38,8 @@ size_t pokedex_cantidad(pokedex_t *pokedex)
 size_t pokedex_iterar(pokedex_t *pokedex,
 		      bool (*funcion_mostrar)(pokemon_t *, void *), void *ctx)
 {
-	return abb_iterar_inorden(pokedex, (bool (*)(void *, void *))funcion_mostrar, ctx);
+	return abb_iterar_inorden(
+		pokedex, (bool (*)(void *, void *))funcion_mostrar, ctx);
 }
 
 bool buscar_pokemon_en_orden(void *_pokemon, void *_posicion)
@@ -69,7 +70,8 @@ void pokedex_destruir(pokedex_t *pokedex)
 	abb_destruir(pokedex);
 }
 
-void pokedex_destruir_todo(pokedex_t *pokedex, void (*eliminar_pokemon)(pokemon_t*))
+void pokedex_destruir_todo(pokedex_t *pokedex,
+			   void (*eliminar_pokemon)(pokemon_t *))
 {
 	abb_destruir_todo(pokedex, (void (*)(void *))eliminar_pokemon);
 }

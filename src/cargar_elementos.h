@@ -5,10 +5,10 @@
 #include "movimientos.h"
 #include "hash.h"
 
-pokedex_t* pokedex_cargada();
+pokedex_t *pokedex_cargada();
 
-movimientos_t* movimientos_cargados();
+movimientos_t *movimientos_cargados();
 
-hash_t* colores_cargados();
+hash_t *colores_cargados();
 
-#endif // COLA_H_
+#endif // CARGAR_ELEMENTOS_H_

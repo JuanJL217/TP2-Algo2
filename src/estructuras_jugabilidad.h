@@ -37,7 +37,7 @@ typedef struct informacion_para_el_juego {
 	Lista *posiciones_pokemones_capturados;
 	tablero_t *tablero;
 	movimientos_t *movimientos;
-	banderas_t* banderas;
+	banderas_t *banderas;
 	Pila *pokemones_capturados;
 	Lista *grupos_formados;
 	size_t maximo_grupo_formado;

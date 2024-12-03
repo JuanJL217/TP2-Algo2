@@ -34,12 +34,7 @@ bool jugar_con_semilla_random(void *banderas);
  * cada que vuelva a poner la misma semilla, debe ser
  * los imsmos pokemones en las mismas posiciones.
  */
-bool jugar_con_semilla(void *banderas);
-
-/**
- * Cierra el programa
- */
-bool salir_del_menu(void *banderas);
+bool jugar_con_semilla_personalizada(void *banderas);
 
 /**
  * Reestablece cualquier modificación que se haya hecho
@@ -67,5 +62,10 @@ bool modificar_dimensiones_tablero(void *banderas);
  * al menú principal.
  */
 bool volver_al_menu(void *banderas);
+
+/**
+ * Cierra el programa
+ */
+bool salir_del_menu(void *banderas);
 
 #endif // LOGICA_H
